@@ -1,0 +1,36 @@
+---
+import Base from "../layouts/Base.astro";
+import site from "../content/site.json";
+
+const k = site.kontakt;
+---
+
+<Base title="Datenschutz">
+  <section>
+    <div class="wrap">
+      <h1>Datenschutzerklärung</h1>
+      <p>
+        Verantwortlich für diese Webseite ist {site.impressum.inhaber}, {site.name}, {k.strasse}, {k.plz} {k.ort}
+        (<a href={`mailto:${k.email}`}>{k.email}</a>).
+      </p>
+      <h2>Was wir erfassen</h2>
+      <p>
+        Diese Webseite verwendet keine Cookies, keine Analyse-Werkzeuge und keine Kontaktformulare. Schriften werden
+        nicht von Drittanbietern geladen.
+      </p>
+      <h2>Hosting</h2>
+      <p>
+        Die Seite wird über Cloudflare ausgeliefert. Dabei verarbeitet Cloudflare technisch notwendige Daten wie die
+        IP-Adresse, um die Seite auszuliefern und vor Angriffen zu schützen.
+      </p>
+      <h2>Externe Links</h2>
+      <p>
+        Der Link „Route planen" führt zu Google Maps. Erst beim Anklicken gelten die Datenschutzbestimmungen von Google.
+      </p>
+      <h2>Ihre Rechte</h2>
+      <p>
+        Sie können jederzeit Auskunft über Ihre Daten verlangen. Wenden Sie sich dazu an die oben genannte Adresse.
+      </p>
+    </div>
+  </section>
+</Base>

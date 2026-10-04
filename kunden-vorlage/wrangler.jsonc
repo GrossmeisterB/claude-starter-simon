@@ -1,0 +1,13 @@
+{
+  // Name = Subdomain der Demo: <name>.<konto-subdomain>.workers.dev
+  "name": "kunden-vorlage",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "preview_urls": true
+  // Kundendomain beim Go-Live ergänzen:
+  // "routes": [{ "pattern": "www.beispiel.ch", "custom_domain": true }]
+}

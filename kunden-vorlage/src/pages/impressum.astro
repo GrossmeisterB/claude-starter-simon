@@ -1,0 +1,26 @@
+---
+import Base from "../layouts/Base.astro";
+import site from "../content/site.json";
+
+const k = site.kontakt;
+---
+
+<Base title="Impressum">
+  <section>
+    <div class="wrap">
+      <h1>Impressum</h1>
+      <p>
+        {site.name}<br />
+        Inhaber: {site.impressum.inhaber}<br />
+        {k.strasse}<br />
+        {k.plz} {k.ort}<br />
+        Schweiz
+      </p>
+      <p>
+        Telefon: {k.telefon}<br />
+        E-Mail: <a href={`mailto:${k.email}`}>{k.email}</a>
+      </p>
+      {site.impressum.uid && <p>UID: {site.impressum.uid}</p>}
+    </div>
+  </section>
+</Base>

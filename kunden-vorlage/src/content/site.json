@@ -1,0 +1,56 @@
+{
+  "live": false,
+  "domain": "",
+  "name": "Restaurant Muster",
+  "art": "Restaurant",
+  "slogan": "Ehrliche Küche aus der Region – seit 1987.",
+  "beschreibung": "Bei uns kommt auf den Teller, was in der Region wächst. Mittags ein schnelles Menü, abends Zeit für Gäste und Gespräche.",
+  "kueche": ["Schweizer Küche", "Saisonal"],
+  "farben": {
+    "primaer": "#7a2e1d",
+    "akzent": "#d9a441",
+    "hintergrund": "#fbf7f2",
+    "text": "#2a211c"
+  },
+  "kontakt": {
+    "telefon": "+41 33 123 45 67",
+    "email": "info@restaurant-muster.ch",
+    "strasse": "Hauptgasse 1",
+    "plz": "3600",
+    "ort": "Thun",
+    "maps_url": "https://maps.google.com/?q=Hauptgasse+1+3600+Thun"
+  },
+  "oeffnungszeiten": [
+    { "tage": "Montag", "zeit": "Ruhetag" },
+    { "tage": "Dienstag – Freitag", "zeit": "11:30–14:00, 17:30–23:00", "schema": [{ "tage": ["Tu", "We", "Th", "Fr"], "von": "11:30", "bis": "14:00" }, { "tage": ["Tu", "We", "Th", "Fr"], "von": "17:30", "bis": "23:00" }] },
+    { "tage": "Samstag", "zeit": "17:00–23:30", "schema": [{ "tage": ["Sa"], "von": "17:00", "bis": "23:30" }] },
+    { "tage": "Sonntag", "zeit": "10:00–16:00", "schema": [{ "tage": ["Su"], "von": "10:00", "bis": "16:00" }] }
+  ],
+  "hinweis": "",
+  "speisekarte": [
+    {
+      "titel": "Vorspeisen",
+      "gerichte": [
+        { "name": "Nüsslisalat", "beschreibung": "mit Ei, Speck und Brotcroûtons", "preis": "14.50" },
+        { "name": "Kürbissuppe", "beschreibung": "mit Kernöl und gerösteten Kernen", "preis": "11.00" }
+      ]
+    },
+    {
+      "titel": "Hauptgänge",
+      "gerichte": [
+        { "name": "Zürcher Geschnetzeltes", "beschreibung": "mit Butterrösti", "preis": "38.50" },
+        { "name": "Älplermagronen", "beschreibung": "mit Apfelmus und Röstzwiebeln", "preis": "26.00", "vegi": true }
+      ]
+    },
+    {
+      "titel": "Dessert",
+      "gerichte": [
+        { "name": "Meringue mit Doppelrahm", "beschreibung": "aus Gruyère", "preis": "12.50", "vegi": true }
+      ]
+    }
+  ],
+  "impressum": {
+    "inhaber": "Max Muster",
+    "uid": ""
+  }
+}
