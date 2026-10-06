@@ -24,7 +24,7 @@ cd ~/claude-starter-simon-update && diff -r alt/claude-home/skills/neuer-kunde ~
 ```
 - **Unverändert** → `cd ~/claude-starter-simon-update && cp -r neu/claude-home/skills/neuer-kunde ~/.claude/skills/`
 - **Stimmt schon mit `neu` überein** (`diff -r neu/claude-home/skills/neuer-kunde ~/.claude/skills/neuer-kunde` leer) → nichts tun.
-- **Sonst** hat Simon selbst etwas geändert → Unterschied in einfachen Worten zeigen, fragen (übernehmen / zusammenführen / behalten). Beim Zusammenführen: Simons Änderungen in die neue Fassung einbauen; die neuen Schritte 5–7 (`npm run check`, Kunden-Notiz, Gestaltung) müssen danach drin sein.
+- **Sonst** hat Simon selbst etwas geändert → Unterschied in einfachen Worten zeigen, fragen (übernehmen / zusammenführen / behalten). Beim Zusammenführen: die neue Fassung nehmen und Simons Änderungen an derselben Stelle wieder einbauen, an der sie bei ihm standen (gleicher Abschnitt; hatte er am Dateiende ergänzt, wieder ans Ende). Die neuen Schritte 5–7 (`npm run check`, Kunden-Notiz, Gestaltung) müssen danach drin sein. Prüfen: `diff -r neu/claude-home/skills/neuer-kunde ~/.claude/skills/neuer-kunde` zeigt nur noch Simons Zeilen.
 
 `kunden-design`:
 ```bash

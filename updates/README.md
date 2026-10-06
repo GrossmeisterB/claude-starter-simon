@@ -7,7 +7,11 @@ Simon sagt: **«Hol die neuesten Updates vom Startpaket.»** Dann gehst du so vo
    ```bash
    cat ~/.config/webwerkstatt/starter-version 2>/dev/null || echo 0
    ```
-3. Neues Paket holen. Existiert `~/claude-starter-simon-update` schon (Rest eines früheren Updates), Simon fragen und erst dann löschen.
+3. Neues Paket holen. Zuerst prüfen, ob ein Rest eines früheren Updates da ist:
+   ```bash
+   ls -d ~/claude-starter-simon-update 2>/dev/null && echo "Rest vorhanden" || echo "frei"
+   ```
+   «Rest vorhanden» → Simon fragen, dann `rm -rf ~/claude-starter-simon-update`. Danach:
    ```bash
    QUELLE="${QUELLE:-https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/heads/main.zip}"
    cd ~ && mkdir claude-starter-simon-update && cd claude-starter-simon-update && curl -sL -o paket.zip "$QUELLE" \
