@@ -74,7 +74,7 @@ impeccable baut die gewählte Richtung. Dazu:
 2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
 3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
-5. `npx astro preview` und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
+5. Zuerst `npx astro preview stop` (eine Vorschau läuft im Hintergrund weiter und zeigt sonst evtl. ein anderes Kundenprojekt), dann `npx astro preview`, Seitentitel prüfen (muss der Name des Betriebs sein) und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
 - impeccable schreibt am Schluss `DESIGN.md` und `.impeccable/design.json` aus der gebauten Seite. **Beide müssen existieren**, sonst ist die Gestaltung nicht fertig (und ohne `DESIGN.md` veröffentlicht GitHub die Seite nicht). Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/design.json`, `.impeccable/config.json` (nur falls entstanden) und den Code.
