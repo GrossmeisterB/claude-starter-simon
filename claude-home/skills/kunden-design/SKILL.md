@@ -1,6 +1,6 @@
 ---
 name: kunden-design
-description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impeccable – Bild-Entscheid, Designrichtung, Umsetzung, Prüfung –, sodass sie weder wie die Vorlage noch wie ein anderer Kunde aussieht. Wird von neuer-kunde vor der ersten Demo aufgerufen, geht auch einzeln für eine Umgestaltung. Trigger - "Gestaltung für", "Design für", "gestalte die Seite", "Seite umgestalten", "/kunden-design".
+description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impeccable – Inspiration, Bild-Entscheid, Umfang, Designrichtung (mit Bildentwürfen, falls ein OpenAI-Schlüssel da ist), Umsetzung, Prüfung –, sodass sie weder wie die Vorlage noch wie ein anderer Kunde aussieht. Wird von neuer-kunde vor der ersten Demo aufgerufen, geht auch einzeln für eine Umgestaltung. Trigger - "Gestaltung für", "Design für", "gestalte die Seite", "Seite umgestalten", "/kunden-design".
 ---
 
 # Kunden-Design
@@ -9,11 +9,13 @@ Lehrmodus beachten. Simons Regel «Grilling vor grösseren Vorhaben» gilt: Wurd
 
 ## Grundsätze
 - Jede Seite bekommt eine eigene Gestaltung. Die Vorlage ist ein roher Platzhalter und kein Vorbild.
-- Inhalte (Texte, Speisekarte, Preise, Zeiten, Kontakt) kommen **nur** aus `src/content/site.json`. Nie fest in Layout oder Seiten schreiben – sonst kommt eine spätere Menüänderung nicht auf die Seite.
+- Inhalte (Texte, Speisekarte, Preise, Zeiten, Kontakt) kommen **nur** aus `src/content/site.json`, weitere Themen (Geschichte, Events, Bankett …) **nur** aus den Dateien `src/content/seiten/*.md`. Nie fest in Layout oder Seiten schreiben – sonst kommt eine spätere Menüänderung nicht auf die Seite.
 - Werte aus `site.json` **unverändert** anzeigen: Telefon, Tage und Zeiten genau so, wie sie dort stehen (gestalten darf man Schrift, Grösse, Anordnung, nicht den Text). Die Technik-Prüfung `npm run check` vergleicht das.
-- Seitenpfade bleiben: `/impressum`, `/datenschutz`, 404. Beide Rechtsseiten von der Startseite aus verlinken.
+- `/impressum`, `/datenschutz` und die 404-Seite bleiben unter diesen Pfaden; weitere Seiten sind frei (z.B. `/karte`, `/bankett`). Impressum und Datenschutz von **jeder** Seite aus verlinken. Die Startseite zeigt mindestens Name, Telefon und Öffnungszeiten.
 - Technik bleibt, wie sie ist: `src/lib/indexable.mjs`, `astro.config.mjs`, die `noindex`-Zeile und die strukturierten Daten (`application/ld+json`) in `Base.astro`, die Seiten Impressum, Datenschutz und 404, `.github/`, `wrangler.jsonc`. Ihr **Aussehen** darf sich ändern, ihr Inhalt und ihre Logik nicht.
 - Schlechte Bilder sind schlimmer als keine.
+- **Inspiration:** Von fremden Seiten übernehmen wir nur Prinzipien (Aufbau, Wirkung, Stimmung) – **nie** Texte, Bilder, Logos, Code oder Markenzeichen.
+- **KI-Bilder:** Bildentwürfe zum Auswählen dürfen KI sein. Auf der fertigen Seite KI nur für Hintergründe, Texturen, Muster und Illustrationen – **nie** Essen, das Lokal oder Menschen.
 - Gestaltet wird mit **impeccable** aus diesem Repo, nicht mit `frontend-design`.
 
 ## 0. Vorbereitung
@@ -21,6 +23,12 @@ Lehrmodus beachten. Simons Regel «Grilling vor grösseren Vorhaben» gilt: Wurd
 ```bash
 source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; cd "$REPO" &&
 ```
+Befehle, die den impeccable-Launcher (`"$IMP/scripts/impeccable"`) aufrufen, bekommen zusätzlich den OpenAI-Schlüssel (falls vorhanden) – nur so, nie anders:
+```bash
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; cd "$REPO" &&
+```
+In einem Befehl mit dieser Schlüssel-Präambel steht **kein** `echo`, `printf`, `cat`, `head`, `tail`, `grep`, `sed`, `awk`, `env` – sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren.
+
 Erste Prüfung:
 ```bash
 source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; cd "$REPO" && git branch --show-current && ls "$IMP/SKILL.md" tests/technik.test.mjs && ls "$VAULT/02 Kunden/"
@@ -28,20 +36,29 @@ source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$R
 - Vor der ersten Demo auf `main` (noch nicht gepusht), sonst auf `staging`.
 - Kunden-Notiz `$VAULT/02 Kunden/<Betrieb>.md` muss existieren.
 - Fehlt `$IMP` oder der Technik-Test: Das Repo stammt aus einer älteren Vorlage → zuerst «Nachrüsten» (unten).
-- **impeccable laden:** `~/Developer/<slug>/.claude/skills/impeccable/SKILL.md` mit dem Read-Werkzeug lesen und für die Schritte 4–8 befolgen. Sein Skill-Ordner ist dieser Ordner; den Launcher immer mit vollem Pfad und Präambel aufrufen: `…; cd "$REPO" && "$IMP/scripts/impeccable" <befehl>`. Simon kurz sagen: «impeccable ist ein Gestaltungs-Werkzeug, das in jedem Kundenprojekt mitkommt. Beim ersten Mal lädt es ein kleines Programm herunter.»
+- **impeccable laden:** `~/Developer/<slug>/.claude/skills/impeccable/SKILL.md` mit dem Read-Werkzeug lesen und für die Schritte 4–8 befolgen. Sein Skill-Ordner ist dieser Ordner; den Launcher immer mit vollem Pfad und Schlüssel-Präambel aufrufen: `…; cd "$REPO" && "$IMP/scripts/impeccable" <befehl>`. Simon kurz sagen: «impeccable ist ein Gestaltungs-Werkzeug, das in jedem Kundenprojekt mitkommt. Beim ersten Mal lädt es ein kleines Programm herunter.»
 - Als ersten impeccable-Befehl einmal den Projekt-Kontext laden (verlangt impeccable selbst):
 ```bash
-source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; cd "$REPO" && "$IMP/scripts/impeccable" context
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; cd "$REPO" && "$IMP/scripts/impeccable" context
 ```
 
 ## 1. Material sichten
 Alles zusammentragen, was es vom Betrieb gibt: `$VAULT/07 Anhänge/<Betrieb>/`, Logo, Schild, alte Webseite, Google-Eintrag, Speisekarte. Kurz auflisten, was da ist.
 
+## 1b. Inspiration
+Quellen suchen: Kunden-Notiz `## Inspiration` und die allgemeine Sammlung `$VAULT/04 Ressourcen/Inspiration.md`. Gibt es keine, Simon fragen: «Hast du Inspiration oder Wünsche vom Kunden – Webseiten oder Bilder, die gefallen? Tipps dazu: `04 Ressourcen/Gestaltung mit Claude.md`.» Ohne Inspiration weiterzumachen ist erlaubt.
+- Webseiten per Playwright ganzseitig fotografieren, je **390×844** (Handy) und **1280×800** (Computer), Cookie-Banner vorher schliessen. Ablage: `$VAULT/07 Anhänge/<Betrieb>/Inspiration/`. Bilder, die Simon bringt, kommen in denselben Ordner.
+- Pro Quelle in Alltagssprache beschreiben, was wirkt: Aufbau, Schrift, Farbe, Bildsprache, Bewegung, Details. Dazu eine Zeile «nicht übernehmen»: Marke, Texte, Bilder.
+- Simon bestätigt oder korrigiert. Den Modus festhalten: **«so in der Art»** (Standard – die Inspiration tritt gegen andere Richtungen an) oder **«genau so»** (die Richtung ist damit gesetzt). In der Kunden-Notiz unter `## Inspiration` eintragen.
+
+## 1c. Umfang: eine Seite oder mehrere
+Mit Simon nach Inhaltsmenge entscheiden: alles auf einer Seite (One-Pager) oder mehrere Seiten (z.B. Start, Karte, Bankett). Zusätzliche Themen (Geschichte, Events, Bankett, Degustationen …) sind je eine Datei `src/content/seiten/<thema>.md` mit `titel:` oben; die Texte schreibt `gastro-texte`. Jede dieser Dateien muss auf der Website sichtbar werden (die Technik-Prüfung kontrolliert das). Die Startseite zeigt immer mindestens Name, Telefon und Öffnungszeiten.
+
 ## 2. Bild-Entscheid: mit oder ohne Fotos
 Jedes vorhandene Foto ansehen und kurz beurteilen: scharf? gutes Licht? mindestens 1600 Pixel breit? zeigt es etwas Echtes, das Gäste interessiert (Gerichte, Raum, Terrasse)? darf es verwendet werden (Kunde hat die Rechte)?
 - Empfehlung mit einem Satz Begründung geben: **mit Fotos** (welche) oder **ohne Fotos**. **Im Zweifel ohne.**
 - Schnelle Handy-Fotos vor Ort sind keine Quelle. Will der Kunde Fotos, aber hat keine guten: Fotograf als Zusatz im Angebot erwähnen, bis dahin ohne Fotos.
-- KI-Bilder nur für Hintergründe, Texturen und Muster – **nie** Essen, das Lokal oder Menschen.
+- KI-Bilder auf der Seite nur für Hintergründe, Texturen, Muster und Illustrationen – **nie** Essen, das Lokal oder Menschen.
 - **Simon entscheidet.** Ohne Fotos heisst: Die Gestaltung lebt von Schrift, Farbe, der Speisekarte als Gestaltungselement und Hintergründen. Sie ist von Anfang an so gedacht, nicht als Seite mit Lücken.
 
 ## 3. Sperrliste aus bisherigen Kunden
@@ -53,15 +70,22 @@ Felder, die noch in Klammern stehen («(… z.B. …)»), sind leere Vorlagen-Be
 ## 4. Produkt-Steckbrief (impeccable `init`)
 impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Material vorbefüllen, Simon nur bestätigen oder ergänzen lassen. Ergebnis: `PRODUCT.md` im Repo.
 
+**Bildentwürfe oder direkt in Code?** Ist ein OpenAI-Schlüssel da, fragt impeccable am Ende von `init`, wie gebaut werden soll. Diese Frage stellt **Simon**, nicht du – du beantwortest sie nicht selbst. Erkläre sie ihm so: «Mit Bildentwürfen siehst du jede Richtung zuerst als Bild der fertigen Seite; das kostet ein paar Rappen pro Entwurf. Direkt in Code ist gratis, du siehst die Seite aber erst, wenn sie gebaut ist.» Empfiehl Bildentwürfe. impeccable speichert die Antwort in `.impeccable/config.json`. Ohne Schlüssel gibt es die Frage nicht; dann wird direkt in Code gebaut.
+
 ## 5. Richtung wählen (impeccable, neue Gestaltung)
 impeccable ausdrücklich so beauftragen. **Erste Gestaltung** (Repo hat noch keine `DESIGN.md`):
-> «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. Code-led, keine Bildentwürfe.»
+> «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach <weitere Seiten aus 1c> und Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. <Inspiration, siehe unten>. <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
 
-**Umgestaltung** (es gibt schon eine `DESIGN.md`): «Redesign. Behalten: <aus dem Grilling>. Ändern: <aus dem Grilling>. Bild-Entscheid und Sperrliste wie oben (die eigene bisherige Gestaltung zählt nicht zur Sperrliste). Code-led, keine Bildentwürfe.»
+**Umgestaltung** (es gibt schon eine `DESIGN.md`): «Redesign. Behalten: <aus dem Grilling>. Ändern: <aus dem Grilling>. Bild-Entscheid, Sperrliste und Inspiration wie oben (die eigene bisherige Gestaltung zählt nicht zur Sperrliste). <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
+
+**Inspiration im Auftrag** (aus Schritt 1b):
+- **«so in der Art»:** Aus der Analyse eine eigene Richtung formulieren. Sie nimmt den Platz von impeccables eigener Empfehlungs-Karte («IMPECCABLE'S PICK») ein – es gibt nur **eine** solche Karte, keine zusätzliche. Würfelt impeccable sie selbst als Hauptrichtung, entfällt die Empfehlungs-Karte. Auftrag: «Inspirations-Richtung: <ein Satz> – als Pick-Karte, Prinzipien übernehmen, nichts kopieren.»
+- **«genau so»:** Die Richtung ist gesetzt. Auftrag: «Pinned direction: <ein Satz aus der Analyse>. Nicht würfeln.» Vor dem Bau die Richtung im Surface-Brief unter `## Direction contract` festhalten (impeccable macht das; prüfen, dass es dort steht). Sperrliste gilt auch hier.
 
 - Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
 - Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
-- **Simon wählt** die Richtung.
+- **Simon wählt** die Richtung – mit Bildentwürfen direkt am Bild.
+- Sagt Simon während der Auswahl «mutiger», «zu brav» oder «sicherer», ist das impeccables Neu-Würfeln mit Stil-Regler: `--register bolder` bzw. `--register safer` (impeccable druckt, wie).
 - **Option für den Kunden:** Will Simon dem Kunden Richtungen zeigen, die Entscheidungsseite per Playwright abfotografieren und nach `$VAULT/07 Anhänge/<Betrieb>/Richtungen/` speichern. Mail an den Kunden nur als Entwurf.
 
 ## 6. Bauen
@@ -70,12 +94,15 @@ impeccable baut die gewählte Richtung. Dazu:
 - Schriften so wählen, dass Zahlen gut lesbar sind: keine durchgestrichene Null in Preisen, Zeiten und Telefonnummer (wirkt wie «Ø»). Notfalls die Schrift-Option für die normale Null einschalten oder eine andere Textschrift nehmen.
 - Schriften lokal einbinden (z.B. `@fontsource/<schrift>` per npm), nicht von Google Fonts laden – das ist für den Datenschutz einfacher.
 - Nach jedem grösseren Schritt: `npm run check`. Rot heisst: Technik oder Inhalt kaputt → zuerst reparieren.
+- **Ohne Schlüssel** (direkt in Code gebaut): nach dem Bau einen `bolder`-Durchgang machen («mutiger»), damit die Seite nicht brav bleibt.
+- **Mehr Mut auf Zuruf** nach dem Bau: Sagt Simon «zu brav», «mutiger» oder «geh über die Grenzen» → impeccable `bolder`, bei «über die Grenzen» `overdrive`.
 
 ## 7. Prüfen
 1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben. Höchstens **drei** Prüfrunden; was danach offen ist, Simon als Liste nennen und in der Kunden-Notiz unter `## Wartet auf` festhalten.
 2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
 3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
+4b. **Kopier-Kontrolle** (nur mit Inspiration): Aus den Aufnahmen in `Inspiration/` drei bis fünf markante Sätze oder Überschriften pro Quelle notieren und im gebauten `dist/` suchen – Treffer = kopiert → umschreiben. Prüfen, dass keine Bilddatei aus `Inspiration/` in `public/` oder `src/` gelandet ist. Ergebnis Simon in einem Satz nennen.
 5. Zuerst `npx astro preview stop` (eine Vorschau läuft im Hintergrund weiter und zeigt sonst evtl. ein anderes Kundenprojekt), dann `npx astro preview`, Seitentitel prüfen (muss der Name des Betriebs sein) und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
@@ -83,7 +110,7 @@ impeccable baut die gewählte Richtung. Dazu:
 ```bash
 cd ~/Developer/<slug> && git add -A && { git diff --cached --quiet || git commit -m "Gestaltung: <Richtung in drei Worten>"; }
 ```
-- Kunden-Notiz `## Gestaltung` ausfüllen (alle fünf Felder). Ohne Fotos: unter `## Wartet auf` «gute Fotos vom Kunden (optional)» eintragen.
+- Kunden-Notiz `## Gestaltung` ausfüllen (alle fünf Felder) und `## Inspiration` vervollständigen. Ohne Fotos: unter `## Wartet auf` «gute Fotos vom Kunden (optional)» eintragen.
 - Push: Vor der ersten Demo übernimmt `neuer-kunde`. Sonst Push auf `staging` (frei) und Vorschau-Link zeigen; `main` nur mit Simons Go.
 
 ## Nachrüsten (Repo aus älterer Vorlage)

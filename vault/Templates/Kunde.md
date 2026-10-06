@@ -27,6 +27,11 @@ domain:
 - **Aufbau-Idee:** (Einstieg + Reihenfolge, z.B. «Name gross auf Farbfläche, dann Karte, Fotos als Streifen»)
 - **Fotos:** (mit / ohne – Quelle, Begründung)
 
+## Inspiration
+- **Quellen:** (Links oder Bilder in 07 Anhänge/<Betrieb>/Inspiration/)
+- **Was gefällt:** 
+- **Modus:** (so in der Art / genau so)
+
 ## Wartet auf
 - (wer muss als Nächstes etwas tun? Simon / Kunde)
 
