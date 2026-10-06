@@ -26,12 +26,18 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - run: node --test tests/technik.test.mjs
+
+      # Ohne DESIGN.md ist die Seite noch die rohe Vorlage; die geht nie raus (DESIGN.md entsteht am Ende von kunden-design).
+      - name: Gestaltung vorhanden?
+        if: hashFiles('DESIGN.md') == ''
+        run: echo "::notice::Kein DESIGN.md – noch keine eigene Gestaltung, es wird nichts veröffentlicht."
 
       - name: Live (main)
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && hashFiles('DESIGN.md') != ''
         run: npx wrangler deploy
 
       # Eine Preview-Version ändert die Live-Seite nicht; sie bekommt eine feste URL staging-<name>.<subdomain>.workers.dev
       - name: Vorschau (staging)
-        if: github.ref_name == 'staging'
+        if: github.ref_name == 'staging' && hashFiles('DESIGN.md') != ''
         run: npx wrangler versions upload --preview-alias staging

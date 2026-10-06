@@ -1,8 +1,14 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
 import site from "../content/site.json";
 
 const k = site.kontakt;
+const themen = await Promise.all(
+  (await getCollection("seiten"))
+    .sort((a, b) => (a.data.reihenfolge ?? Infinity) - (b.data.reihenfolge ?? Infinity) || a.data.titel.localeCompare(b.data.titel, "de"))
+    .map(async (e) => ({ titel: e.data.titel, Content: (await render(e)).Content })),
+);
 ---
 
 <Base>
@@ -67,6 +73,15 @@ const k = site.kontakt;
     </div>
   </section>
 
+  {themen.map(({ titel, Content }) => (
+    <section class="thema">
+      <div class="wrap">
+        <h2>{titel}</h2>
+        <Content />
+      </div>
+    </section>
+  ))}
+
   <section id="kontakt" class="kontakt">
     <div class="wrap">
       <h2>Kontakt &amp; Anfahrt</h2>
@@ -85,27 +100,6 @@ const k = site.kontakt;
 </Base>
 
 <style>
-  .hero { background: linear-gradient(160deg, var(--primaer), color-mix(in srgb, var(--primaer) 70%, black)); color: #fff; padding-block: 4rem 3.5rem; }
-  .hero h1 { font-size: clamp(2.2rem, 8vw, 3.6rem); }
-  .art { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.85rem; color: var(--akzent); margin: 0 0 0.5rem; }
-  .slogan { font-size: 1.2rem; max-width: 34rem; }
-  .aktionen { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
-  .hero .btn { background: var(--akzent); color: var(--text); }
-  .hero .btn.sekundaer { background: transparent; color: #fff; border-color: #fff; }
-  .hinweis { background: var(--akzent); color: var(--text); padding-block: 0.9rem; font-weight: 600; text-align: center; }
-  .karte { background: #fff; }
-  .gruppe + .gruppe { margin-top: 2rem; }
-  .gruppe h3 { color: var(--primaer); border-bottom: 2px solid var(--akzent); padding-bottom: 0.3rem; }
-  ul { list-style: none; padding: 0; margin: 0; }
-  li { padding-block: 0.7rem; border-bottom: 1px dashed color-mix(in srgb, var(--text) 20%, transparent); }
-  .zeile { display: flex; justify-content: space-between; gap: 1rem; font-weight: 600; }
-  .preis { white-space: nowrap; }
-  .vegi { color: #3d7a3a; font-weight: 400; font-size: 0.9rem; }
-  .beschr { margin: 0.2rem 0 0; font-size: 0.95rem; opacity: 0.8; }
-  dl { margin: 0; }
-  .tag { display: flex; justify-content: space-between; gap: 1rem; padding-block: 0.5rem; border-bottom: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
-  dt { font-weight: 600; }
-  dd { margin: 0; text-align: right; }
-  .block { display: block; white-space: nowrap; }
-  address { font-style: normal; margin-bottom: 1rem; }
+  ul { list-style: none; padding: 0; }
+  .zeile { display: flex; justify-content: space-between; gap: 1rem; }
 </style>

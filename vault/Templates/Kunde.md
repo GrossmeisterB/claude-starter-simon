@@ -18,7 +18,19 @@ domain:
 - **Bisherige Webseite:** 
 
 ## Status
-- Repo angelegt, Demo noch nicht gezeigt
+- Repo angelegt, Gestaltung läuft
+
+## Gestaltung
+- **Richtung:** (ein Satz, z.B. «Kreidetafel-Bistro: Karte im Mittelpunkt, warm, handfest»)
+- **Schriftpaar:** (Titel / Text, z.B. «Fraunces / Source Sans 3»)
+- **Farbwelt:** 
+- **Aufbau-Idee:** (Einstieg + Reihenfolge, z.B. «Name gross auf Farbfläche, dann Karte, Fotos als Streifen»)
+- **Fotos:** (mit / ohne – Quelle, Begründung)
+
+## Inspiration
+- **Quellen:** (Links oder Bilder in 07 Anhänge/<Betrieb>/Inspiration/)
+- **Was gefällt:** 
+- **Modus:** (so in der Art / genau so)
 
 ## Wartet auf
 - (wer muss als Nächstes etwas tun? Simon / Kunde)

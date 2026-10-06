@@ -76,7 +76,7 @@ cp "$S/CLAUDE.md" ~/.claude/CLAUDE.md
 cp "$S"/hooks/*.mjs ~/.claude/hooks/
 cp -r "$S"/skills/* ~/.claude/skills/
 ```
-**settings.json zusammenführen** (Bestehendes bleibt erhalten, Backup wird angelegt):
+**settings.json zusammenführen** (Hooks und Einstellungen wie «keine Nutzungsdaten senden»; Bestehendes bleibt erhalten, Backup wird angelegt):
 ```bash
 node "$S/merge-settings.mjs"
 ```
@@ -97,9 +97,11 @@ add mattpocock/skills grill-me
 add mattpocock/skills grilling
 add vercel-labs/skills find-skills
 for s in copywriting copy-editing cro product-marketing; do add coreyhaines31/marketingskills "$s"; done
+for s in review-animations mobile-native; do npx -y skills@1.7.0 add "emilkowalski/skills#e8a175de22ae1e49370fc144c1f3bb9aeedf988d" -s "$s" -g -a claude-code --copy -y; done
+node -e 'const fs=require("fs"),f=process.argv[1];let s=fs.readFileSync(f,"utf8");if(!/^disable-model-invocation:/m.test(s)){fs.writeFileSync(f,s.replace(/^description:/m,"disable-model-invocation: true\ndescription:"))}' ~/.claude/skills/mobile-native/SKILL.md
 ls ~/.claude/skills
 ```
-Erwartet in `~/.claude/skills`: `copy-editing copywriting cro find-skills firmenname gastro-texte grill-me grilling neuer-kunde product-marketing session-recap wrapup`. Fehlt etwas → Ausgabe prüfen und Ursache erklären.
+Erwartet in `~/.claude/skills`: `copy-editing copywriting cro find-skills firmenname gastro-texte grill-me grilling kunden-design mobile-native neuer-kunde product-marketing review-animations session-recap wrapup`. Fehlt etwas → Ausgabe prüfen und Ursache erklären.
 
 ### 3e – Playwright (Webseiten in Handy-Ansicht prüfen)
 ```bash
@@ -154,6 +156,9 @@ ACC="$(< ~/.config/webwerkstatt/cloudflare-account-id)"
 curl -s -H "Authorization: Bearer $(< ~/.config/webwerkstatt/cloudflare-token)" "https://api.cloudflare.com/client/v4/accounts/$ACC/workers/subdomain"
 ```
 → `result.subdomain` ist `WORKERS_SUBDOMAIN`.
+
+### 4d – Bildentwürfe (OpenAI, freiwillig)
+Simon fragen, ob er Gestaltungs-Richtungen zuerst als Bild sehen will (kostet ein paar Rappen pro Bild) – jetzt, später oder gar nicht. Ablauf genau wie in `~/claude-starter-simon/updates/001-kundenseiten-individuell.md`, Schritt 9 (ein Schritt pro Nachricht, Schlüssel nur per Notepad in `~/.config/webwerkstatt/openai-key`, nie lesen). Überspringen ist jederzeit möglich; ohne Schlüssel baut `kunden-design` direkt in Code.
 
 ---
 
@@ -240,6 +245,7 @@ Simon soll jetzt **in Obsidian** das Terminal öffnen, `claude` eintippen und be
 Der Skill `neuer-kunde` läuft dort komplett durch. Dabei wird geprüft:
 - [ ] Demo-URL `https://muster-kafi-….<subdomain>.workers.dev` lädt, Header `x-robots-tag: noindex`
 - [ ] Vorschau-URL `https://staging-….workers.dev` lädt
+- [ ] Die Seite hat eine eigene Gestaltung (nicht die schwarz-weisse Vorlage), `## Gestaltung` in der Kunden-Notiz ist ausgefüllt
 - [ ] **Simon öffnet die Demo-URL auf seinem Handy** (der wichtigste Test)
 - [ ] Kunden-Notiz im Vault angelegt, Daily Note von heute existiert
 - [ ] `wrapup` am Ende → Vault ist auf GitHub gepusht
@@ -251,6 +257,7 @@ Die Musterseite bleibt bestehen: Backlog-Punkt „Erste Musterseite als Referenz
 ## Phase 8 – Abschluss
 
 - `SETUP-STAND.md`: „Setup abgeschlossen <Datum>".
+- Update-Stand setzen (eine Neuinstallation enthält Update 001 schon): `printf '%s' 1 > ~/.config/webwerkstatt/starter-version`
 - Simon kurz zeigen:
   - Obsidian → Terminal → `claude` = Arbeitsplatz.
   - „Was steht an?" = Briefing.

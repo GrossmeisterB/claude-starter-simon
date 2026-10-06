@@ -1,6 +1,6 @@
 ---
 name: gastro-texte
-description: Schreibt Texte für Schweizer Gastro-Betriebe – Webseite (Startseite, Über uns, Speisekarte, Öffnungszeiten, Ferien), Google-Unternehmensprofil, Social-Media-Posts – und Simons eigenes Angebot bzw. Pitch-Mail an Betriebe. Trigger - "Texte für", "schreib die Startseite", "Speisekarte formulieren", "Google-Profil", "Instagram-Post", "Pitch-Mail", "Angebot formulieren", "/gastro-texte".
+description: Schreibt Texte für Schweizer Gastro-Betriebe – Webseite (Startseite, Über uns, Speisekarte, Öffnungszeiten, Ferien, Zusatzthemen wie Geschichte, Bankett, Events), Google-Unternehmensprofil, Social-Media-Posts – und Simons eigenes Angebot bzw. Pitch-Mail an Betriebe. Trigger - "Texte für", "schreib die Startseite", "Speisekarte formulieren", "Google-Profil", "Instagram-Post", "Pitch-Mail", "Angebot formulieren", "/gastro-texte".
 ---
 
 # Gastro-Texte
@@ -47,6 +47,22 @@ Baut auf den Skills `copywriting` (Grundlagen) und `copy-editing` (Überarbeiten
 
 **Lokales SEO:** Ort und Küche müssen natürlich in `slogan` oder `beschreibung` vorkommen („Pizzeria in Thun"). Öffnungszeiten-Feld `schema` korrekt pflegen – daraus entstehen die strukturierten Daten für Google.
 
+## Zusatzthemen → `src/content/seiten/<thema>.md`
+
+Alles, was über `site.json` hinausgeht (Geschichte, Events, Bankett, Degustationen, Catering …), ist **eine Datei pro Thema**, Dateiname klein und ohne Umlaute (`bankett.md`):
+```markdown
+---
+titel: Bankett & Feiern
+reihenfolge: 2
+---
+
+Text, 60–200 Wörter.
+```
+- `titel:` ist Pflicht und erscheint so auf der Website. `reihenfolge:` (Zahl) ist optional und bestimmt die Reihenfolge; Themen ohne Zahl kommen danach, alphabetisch nach Titel.
+- Schweizer Schreibweise und Stil wie oben; eine klare Handlung am Schluss (z.B. «Anfragen für Gruppen ab 12 Personen: 032 …»).
+- **Bilder** nur aus `07 Anhänge/<Betrieb>/`, mit denselben Regeln wie beim Bild-Entscheid in `kunden-design` (scharf, hell, ≥1600 px, echt, Rechte beim Kunden). Ablegen unter `src/assets/seiten/` und im Text einbinden: `![Saal mit gedeckten Tischen](../../assets/seiten/saal.jpg)`. Keine KI-Bilder von Essen, Lokal oder Menschen.
+- Eine Datei, die mit `_` beginnt (`_entwurf.md`), erscheint nicht auf der Website.
+
 ## Google-Unternehmensprofil
 
 Bringt kleinen Betrieben oft mehr Gäste als die Webseite.
@@ -75,4 +91,4 @@ Für `00 Kontext/Angebot.md` und Erstkontakt-Mails an Betriebe:
 1. Interview / Kontext lesen.
 2. **2 Varianten** liefern (z.B. sachlich vs. herzlich), Simon wählt.
 3. Mit `copy-editing` einmal durchgehen: Floskeln raus, kürzen.
-4. Gewählte Texte in `site.json` eintragen (auf `staging`) und kurz in der Kunden-Notiz vermerken.
+4. Gewählte Texte in `site.json` bzw. als Zusatzthema in `src/content/seiten/<thema>.md` eintragen (vor der ersten Demo auf `main`, sonst auf `staging`), `npm run check` laufen lassen (zeigt, ob jedes Thema auf der Website erscheint) und kurz in der Kunden-Notiz vermerken.

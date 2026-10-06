@@ -2,10 +2,14 @@
   "name": "kunden-vorlage",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "astro build && node --test tests/technik.test.mjs"
   },
   "dependencies": {
     "astro": "^7.3.5"

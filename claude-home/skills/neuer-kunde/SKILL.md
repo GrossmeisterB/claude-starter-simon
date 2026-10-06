@@ -21,7 +21,7 @@ Fehlt etwas → abbrechen und sagen, was fehlt.
 1. Name des Betriebs und Ort?
 2. Art (Restaurant, Café, Bar, Imbiss …)?
 3. Ansprechperson und Telefon/Mail?
-4. Gibt es schon eine Webseite, Speisekarte als PDF/Foto oder einen Google-Eintrag? (Material → `07 Anhänge/`)
+4. Gibt es schon eine Webseite, Speisekarte als PDF/Foto, einen Google-Eintrag, Logo, Schild – und **gute** Fotos (professionell oder sehr gut)? (Material → `07 Anhänge/<Betrieb>/`)
 
 Daraus den **Slug** vorschlagen: klein, Bindestriche, Ort am Schluss, max. ~30 Zeichen, z.B. `baeren-thun`. Umlaute: ä→ae, ö→oe, ü→ue. Simon bestätigt den Slug – er wird Teil der Demo-URL.
 
@@ -49,14 +49,24 @@ gh secret set CLOUDFLARE_ACCOUNT_ID --repo "$GITHUB_USER/$SLUG" < ~/.config/webw
 ### 5. Lokal prüfen
 ```bash
 npm install
-npm run build
+npm run check
 ```
-Danach `npx astro preview` starten und die Seite per Playwright in Handy-Ansicht (390×844) anschauen. Simon den Screenshot zeigen.
-
-### 6. Erste Demo veröffentlichen
-Simon kurz sagen: „Ich pushe jetzt auf `main` – das erstellt die Demo unter `https://<slug>.<subdomain>.workers.dev`. Sie ist für Suchmaschinen gesperrt, und noch hat niemand den Link." Sein Go abwarten.
+`npm run check` baut die Seite und prüft die Technik (Suchmaschinen-Sperre, Angaben für Google, Inhalte aus `site.json`). Dann die Grundeinstellungen festhalten (noch nicht hochladen):
 ```bash
-git add -A && git commit -m "Kunde <Betrieb> eingerichtet"
+cd ~/Developer/<slug> && git add -A && { git diff --cached --quiet || git commit -m "Kunde <Betrieb> eingerichtet"; }
+```
+
+### 6. Kunden-Notiz anlegen
+- `02 Kunden/<Betrieb>.md` aus `Templates/Kunde.md` anlegen und Platzhalter füllen (`repo`, Steckbrief). `demo_url`/`staging_url` folgen in Schritt 10.
+- `## Status`: „Repo angelegt, Gestaltung läuft“.
+
+### 7. Gestaltung
+Skill `kunden-design` vollständig ausführen. Erst wenn er abgeschlossen ist (Check grün, Screenshots gezeigt, `## Gestaltung` in der Kunden-Notiz ausgefüllt), weiter. Die rohe Vorlage geht nie als Demo raus.
+
+### 8. Erste Demo veröffentlichen
+Simon kurz sagen: „Ich pushe jetzt auf `main` – das erstellt die Demo unter `https://<slug>.<subdomain>.workers.dev`. Sie ist für Suchmaschinen gesperrt, und noch hat niemand den Link. Die Seite hat jetzt ihre eigene Gestaltung." Sein Go abwarten.
+```bash
+git status --short
 git push origin main
 sleep 8
 RUN=$(gh run list --branch main --limit 1 --json databaseId --jq '.[0].databaseId')
@@ -72,19 +82,17 @@ gh run watch "$RUN" --exit-status
 gh run view "$RUN" --log | grep -o 'https://[a-z0-9.-]*workers.dev' | sort -u
 ```
 Die ausgegebene Vorschau-URL ist massgebend. Weicht sie vom erwarteten Muster ab, die echte verwenden und in Kunden-Notiz und `UEBERGABE.md` eintragen.
-Den allerersten Run, den GitHub beim Anlegen aus der Vorlage eventuell startet, ignorieren – da fehlten die Secrets noch.
+Den allerersten Run, den GitHub beim Anlegen aus der Vorlage eventuell startet, ignorieren – er veröffentlicht nichts, weil noch keine `DESIGN.md` existiert (oder die Secrets noch fehlten).
 
-### 7. Beweis
+### 9. Beweis
 - `curl -sI https://<slug>.<subdomain>.workers.dev` → `200` und `x-robots-tag: noindex`
 - `https://staging-<slug>.<subdomain>.workers.dev` per Playwright in Handy-Ansicht → Screenshot zeigen
 - Schlägt ein Run fehl: `gh run view "$RUN" --log-failed` lesen und Ursache erklären, nicht blind wiederholen.
 
-### 8. Vault
-- `02 Kunden/<Betrieb>.md` aus `Templates/Kunde.md` anlegen und Platzhalter füllen (`demo_url`, `staging_url`, `repo`).
-- `## Status`: „Demo live (noch Mustertexte)". `## Wartet auf`: was als Nächstes von wem kommt.
+### 10. Vault und Abschluss
+- Kunden-Notiz: `demo_url`, `staging_url` eintragen. `## Status`: „Demo live (eigene Gestaltung, noch Mustertexte)". `## Wartet auf`: ergänzen (nicht ersetzen – `kunden-design` hat dort evtl. schon «gute Fotos» eingetragen), was als Nächstes von wem kommt.
 - In die heutige Daily Note unter `## 💬 Kunden` eine Zeile schreiben.
 
-### 9. Abschluss
 Kurz zusammenfassen: Demo-URL, Vorschau-URL, Repo-Link, nächster Schritt (meist: Texte mit `gastro-texte`, Speisekarte vom Kunden holen).
 
 ## Ab jetzt: Änderungen für diesen Kunden

@@ -19,7 +19,10 @@ Fast alles steht in **einer** Datei: `src/content/site.json`
 - Öffnungszeiten → `oeffnungszeiten`
 - Speisekarte → `speisekarte`
 - Ferien / Sonderhinweis → `hinweis` (leer lassen = kein Banner)
-- Farben → `farben`
+
+Weitere Themen (Geschichte, Events, Bankett …) stehen je in einer Datei unter `src/content/seiten/` (oben `titel:`). Datei anlegen = neues Thema auf der Website.
+
+Das Aussehen (Farben, Schriften, Aufbau) steht nicht in `site.json`, sondern in `DESIGN.md` und im Code (`src/layouts/`, `src/pages/`).
 
 ## Veröffentlichen
 
@@ -27,7 +30,7 @@ Fast alles steht in **einer** Datei: `src/content/site.json`
 2. GitHub baut automatisch die **Vorschau** (ca. 1–2 Minuten) → Link oben.
 3. Passt alles: `staging` in `main` übernehmen (mergen) und pushen → die Seite ist **live**.
 
-Der Ablauf steht in `.github/workflows/deploy.yml`. Nötig sind zwei Repository-Secrets: `CLOUDFLARE_API_TOKEN` (Vorlage „Edit Cloudflare Workers") und `CLOUDFLARE_ACCOUNT_ID`.
+Der Ablauf steht in `.github/workflows/deploy.yml`. Veröffentlicht wird nur, wenn die automatische Technik-Prüfung (`npm run check`) grün ist und es eine `DESIGN.md` gibt (also die Seite gestaltet ist); sonst steht im GitHub-Lauf, warum nicht. Nötig sind zwei Repository-Secrets: `CLOUDFLARE_API_TOKEN` (Vorlage „Edit Cloudflare Workers") und `CLOUDFLARE_ACCOUNT_ID`.
 
 ## Suchmaschinen
 

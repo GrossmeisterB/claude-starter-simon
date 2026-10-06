@@ -1,4 +1,5 @@
 {
+  "env": { "IMPECCABLE_NO_TELEMETRY": "1", "DO_NOT_TRACK": "1" },
   "hooks": {
     "SessionStart": [
       {
@@ -13,6 +14,12 @@
     "PreToolUse": [
       {
         "matcher": "Read|Edit|Write|MultiEdit|Bash",
+        "hooks": [
+          { "type": "command", "command": "node \"$HOME/.claude/hooks/block-sensitive.mjs\"" }
+        ]
+      },
+      {
+        "matcher": "Grep|Glob",
         "hooks": [
           { "type": "command", "command": "node \"$HOME/.claude/hooks/block-sensitive.mjs\"" }
         ]
