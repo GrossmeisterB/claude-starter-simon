@@ -6,3 +6,8 @@ dist/
 .env.*
 .DS_Store
 Thumbs.db
+.impeccable/config.local.json
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/review/
+.impeccable/live/
