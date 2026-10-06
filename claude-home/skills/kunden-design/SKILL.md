@@ -46,7 +46,7 @@ source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$R
 Alles zusammentragen, was es vom Betrieb gibt: `$VAULT/07 Anhänge/<Betrieb>/`, Logo, Schild, alte Webseite, Google-Eintrag, Speisekarte. Kurz auflisten, was da ist.
 
 ## 1b. Inspiration
-Quellen suchen: Kunden-Notiz `## Inspiration` und die allgemeine Sammlung `$VAULT/04 Ressourcen/Inspiration.md`. Gibt es keine, Simon fragen: «Hast du Inspiration oder Wünsche vom Kunden – Webseiten oder Bilder, die gefallen? Tipps dazu: `04 Ressourcen/Gestaltung mit Claude.md`.» Ohne Inspiration weiterzumachen ist erlaubt.
+Quellen suchen: Kunden-Notiz `## Inspiration` und die allgemeine Sammlung `$VAULT/04 Ressourcen/Inspiration.md` (Bilder dazu in `$VAULT/07 Anhänge/Inspiration/`; passende in den Kundenordner kopieren). Gibt es keine, Simon fragen: «Hast du Inspiration oder Wünsche vom Kunden – Webseiten oder Bilder, die gefallen? Tipps dazu: `04 Ressourcen/Gestaltung mit Claude.md`.» Ohne Inspiration weiterzumachen ist erlaubt.
 - Webseiten per Playwright ganzseitig fotografieren, je **390×844** (Handy) und **1280×800** (Computer), Cookie-Banner vorher schliessen. Ablage: `$VAULT/07 Anhänge/<Betrieb>/Inspiration/`. Bilder, die Simon bringt, kommen in denselben Ordner.
 - Pro Quelle in Alltagssprache beschreiben, was wirkt: Aufbau, Schrift, Farbe, Bildsprache, Bewegung, Details. Dazu eine Zeile «nicht übernehmen»: Marke, Texte, Bilder.
 - Simon bestätigt oder korrigiert. Den Modus festhalten: **«so in der Art»** (Standard – die Inspiration tritt gegen andere Richtungen an) oder **«genau so»** (die Richtung ist damit gesetzt). In der Kunden-Notiz unter `## Inspiration` eintragen.

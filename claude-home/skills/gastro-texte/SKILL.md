@@ -58,7 +58,7 @@ reihenfolge: 2
 
 Text, 60–200 Wörter.
 ```
-- `titel:` ist Pflicht und erscheint so auf der Website. `reihenfolge:` (Zahl) ist optional und bestimmt die Reihenfolge.
+- `titel:` ist Pflicht und erscheint so auf der Website. `reihenfolge:` (Zahl) ist optional und bestimmt die Reihenfolge; Themen ohne Zahl kommen danach, alphabetisch nach Titel.
 - Schweizer Schreibweise und Stil wie oben; eine klare Handlung am Schluss (z.B. «Anfragen für Gruppen ab 12 Personen: 032 …»).
 - **Bilder** nur aus `07 Anhänge/<Betrieb>/`, mit denselben Regeln wie beim Bild-Entscheid in `kunden-design` (scharf, hell, ≥1600 px, echt, Rechte beim Kunden). Ablegen unter `src/assets/seiten/` und im Text einbinden: `![Saal mit gedeckten Tischen](../../assets/seiten/saal.jpg)`. Keine KI-Bilder von Essen, Lokal oder Menschen.
 - Eine Datei, die mit `_` beginnt (`_entwurf.md`), erscheint nicht auf der Website.
@@ -91,4 +91,4 @@ Für `00 Kontext/Angebot.md` und Erstkontakt-Mails an Betriebe:
 1. Interview / Kontext lesen.
 2. **2 Varianten** liefern (z.B. sachlich vs. herzlich), Simon wählt.
 3. Mit `copy-editing` einmal durchgehen: Floskeln raus, kürzen.
-4. Gewählte Texte in `site.json` bzw. als Zusatzthema in `src/content/seiten/<thema>.md` eintragen (auf `staging`), `npm run check` laufen lassen (zeigt, ob jedes Thema auf der Website erscheint) und kurz in der Kunden-Notiz vermerken.
+4. Gewählte Texte in `site.json` bzw. als Zusatzthema in `src/content/seiten/<thema>.md` eintragen (vor der ersten Demo auf `main`, sonst auf `staging`), `npm run check` laufen lassen (zeigt, ob jedes Thema auf der Website erscheint) und kurz in der Kunden-Notiz vermerken.

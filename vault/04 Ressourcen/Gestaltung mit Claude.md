@@ -12,7 +12,7 @@ Wie eine Kundenseite ein eigenes Gesicht bekommt – und was du dazu beitragen k
 
 Inspiration heisst: Seiten oder Bilder, die dir oder dem Kunden gefallen.
 - **Wo finden:** Webseiten von Lokalen, die du magst (auch im Ausland). Sammlungen guter Webseiten wie awwwards.com oder siteinspire.com, dort die Kategorie «Restaurant» oder «Food». Instagram-Profile von Lokalen.
-- **Wohin damit:** Für einen bestimmten Kunden in seine Kunden-Notiz unter `## Inspiration` (Link einfügen oder Bild in `07 Anhänge/<Betrieb>/Inspiration/` legen). Für später in die Sammlung [[Inspiration]].
+- **Wohin damit:** Für einen bestimmten Kunden in seine Kunden-Notiz unter `## Inspiration` (Link einfügen oder Bild in `07 Anhänge/<Betrieb>/Inspiration/` legen). Für später in die Sammlung [[Inspiration]] (Bilder dazu in `07 Anhänge/Inspiration/`).
 - **Das Wichtigste:** Schreib dazu, **was** dir gefällt. «Die grosse Schrift oben» oder «die Karte wie eine Tafel» hilft Claude viel mehr als nur ein Link.
 
 ## Fotos
@@ -27,7 +27,7 @@ Inspiration heisst: Seiten oder Bilder, die dir oder dem Kunden gefallen.
 2. Du bestätigst oder korrigierst und sagst, wie eng es sein soll:
    - **«so in der Art»** – die Inspiration wird eine von mehreren Richtungen, du wählst.
    - **«genau so»** – die Richtung ist damit gesetzt.
-3. Claude zeigt dir Richtungen. Ist ein OpenAI-Schlüssel eingerichtet, siehst du jede Richtung zuerst als **Bildentwurf** der fertigen Seite (kostet ein paar Rappen pro Bild). Sonst baut Claude direkt und zeigt dir die fertige Seite.
+3. Claude zeigt dir Richtungen. Hast du einen OpenAI-Schlüssel eingerichtet (optional, siehe Update-Anleitung), fragt dich Claude einmal pro Kunde: **Bildentwürfe** – du siehst jede Richtung zuerst als Bild der fertigen Seite, kostet ein paar Rappen pro Bild – oder **direkt bauen** (gratis, du siehst die Seite erst fertig). Ohne Schlüssel baut Claude immer direkt.
 4. Du wählst, Claude baut, prüft und zeigt dir Handy- und Computer-Ansicht.
 
 ## Mehr Mut verlangen
