@@ -27,7 +27,7 @@ Befehle, die den impeccable-Launcher (`"$IMP/scripts/impeccable"`) aufrufen, bek
 ```bash
 source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; cd "$REPO" &&
 ```
-In einem Befehl mit dieser Schlüssel-Präambel steht **kein** `echo`, `printf`, `cat`, `head`, `tail`, `grep`, `sed`, `awk`, `env` – sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren.
+In einem Befehl mit dieser Schlüssel-Präambel steht nach der Präambel **nur** der Launcher-Aufruf – kein Befehl, der etwas anzeigt, durchsucht oder kopiert (`echo`, `printf`, `cat`, `grep`, `sed`, `env`, `cp`, `tee` usw.), sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren. Ob ein Schlüssel da ist, zeigt `wc -c < ~/.config/webwerkstatt/openai-key` (Zahl über 0 = ja, Fehlermeldung = nein).
 
 Erste Prüfung:
 ```bash
@@ -70,20 +70,22 @@ Felder, die noch in Klammern stehen («(… z.B. …)»), sind leere Vorlagen-Be
 ## 4. Produkt-Steckbrief (impeccable `init`)
 impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Material vorbefüllen, Simon nur bestätigen oder ergänzen lassen. Ergebnis: `PRODUCT.md` im Repo.
 
-**Bildentwürfe oder direkt in Code?** Ist ein OpenAI-Schlüssel da, fragt impeccable am Ende von `init`, wie gebaut werden soll. Diese Frage stellt **Simon**, nicht du – du beantwortest sie nicht selbst. Erkläre sie ihm so: «Mit Bildentwürfen siehst du jede Richtung zuerst als Bild der fertigen Seite; das kostet ein paar Rappen pro Entwurf. Direkt in Code ist gratis, du siehst die Seite aber erst, wenn sie gebaut ist.» Empfiehl Bildentwürfe. impeccable speichert die Antwort in `.impeccable/config.json`. Ohne Schlüssel gibt es die Frage nicht; dann wird direkt in Code gebaut.
+**Bildentwürfe oder direkt in Code?** Ist ein OpenAI-Schlüssel da und für dieses Projekt noch nichts gespeichert, fragt impeccable am Ende von `init`, wie gebaut werden soll (bei einer Umgestaltung gilt meist die frühere Antwort, dann kommt keine Frage). Diese Frage stellt **Simon**, nicht du – du beantwortest sie nicht selbst. Erkläre sie ihm so: «Mit Bildentwürfen siehst du jede Richtung zuerst als Bild der fertigen Seite; das kostet ein paar Rappen pro Entwurf. Direkt in Code ist gratis, du siehst die Seite aber erst, wenn sie gebaut ist.» Empfiehl Bildentwürfe. impeccable speichert die Antwort in `.impeccable/config.json`. Ohne Schlüssel gibt es die Frage nicht; dann wird direkt in Code gebaut.
 
 ## 5. Richtung wählen (impeccable, neue Gestaltung)
 impeccable ausdrücklich so beauftragen. **Erste Gestaltung** (Repo hat noch keine `DESIGN.md`):
-> «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach <weitere Seiten aus 1c> und Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. <Inspiration, siehe unten>. <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
+> «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach <weitere Seiten aus 1c> und Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. <nur mit Inspiration: siehe unten>. <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
+Teile in `<nur …>` und `<weitere Seiten aus 1c>` ersatzlos weglassen, wenn sie nicht zutreffen.
 
-**Umgestaltung** (es gibt schon eine `DESIGN.md`): «Redesign. Behalten: <aus dem Grilling>. Ändern: <aus dem Grilling>. Bild-Entscheid, Sperrliste und Inspiration wie oben (die eigene bisherige Gestaltung zählt nicht zur Sperrliste). <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
+**Umgestaltung** (es gibt schon eine `DESIGN.md`): «Redesign. Behalten: <aus dem Grilling>. Ändern: <aus dem Grilling>. Bild-Entscheid und Sperrliste wie oben (die eigene bisherige Gestaltung zählt nicht zur Sperrliste). <nur mit Inspiration: «Inspiration: <ein Satz aus der Analyse> – Prinzipien übernehmen, nichts kopieren.»> <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
+Bei einer Umgestaltung, die die bisherige Welt behält, zeigt impeccable weder Pick- noch Standard-Karte; die Inspiration fliesst dann nur als Wunsch in den Auftrag ein. Wird die Welt ersetzt, gilt der Ablauf der ersten Gestaltung.
 
-**Inspiration im Auftrag** (aus Schritt 1b):
+**Inspiration im Auftrag** (aus Schritt 1b, erste Gestaltung oder neue Welt):
 - **«so in der Art»:** Aus der Analyse eine eigene Richtung formulieren. Sie nimmt den Platz von impeccables eigener Empfehlungs-Karte («IMPECCABLE'S PICK») ein – es gibt nur **eine** solche Karte, keine zusätzliche. Würfelt impeccable sie selbst als Hauptrichtung, entfällt die Empfehlungs-Karte. Auftrag: «Inspirations-Richtung: <ein Satz> – als Pick-Karte, Prinzipien übernehmen, nichts kopieren.»
-- **«genau so»:** Die Richtung ist gesetzt. Auftrag: «Pinned direction: <ein Satz aus der Analyse>. Nicht würfeln.» Vor dem Bau die Richtung im Surface-Brief unter `## Direction contract` festhalten (impeccable macht das; prüfen, dass es dort steht). Sperrliste gilt auch hier.
+- **«genau so»:** Die Richtung ist gesetzt. Auftrag: «Pinned direction: <ein Satz aus der Analyse>. Nicht würfeln.» Vor dem Bau die Richtung im Surface-Brief unter `## Direction contract` festhalten (impeccable macht das; prüfen, dass es dort steht). Sperrliste gilt auch hier: Trifft die gesetzte Richtung selbst ein vergebenes Schriftpaar oder eine vergebene Aufbau-Idee, das **vor** dem Auftrag mit Simon klären und die Richtung in diesem Punkt ändern (impeccable würfelt eine gesetzte Richtung nicht neu).
 
 - Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
-- Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
+- Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable bei einer neuen Gestaltung immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
 - **Simon wählt** die Richtung – mit Bildentwürfen direkt am Bild.
 - Sagt Simon während der Auswahl «mutiger», «zu brav» oder «sicherer», ist das impeccables Neu-Würfeln mit Stil-Regler: `--register bolder` bzw. `--register safer` (impeccable druckt, wie).
 - **Option für den Kunden:** Will Simon dem Kunden Richtungen zeigen, die Entscheidungsseite per Playwright abfotografieren und nach `$VAULT/07 Anhänge/<Betrieb>/Richtungen/` speichern. Mail an den Kunden nur als Entwurf.
@@ -95,14 +97,22 @@ impeccable baut die gewählte Richtung. Dazu:
 - Schriften lokal einbinden (z.B. `@fontsource/<schrift>` per npm), nicht von Google Fonts laden – das ist für den Datenschutz einfacher.
 - Nach jedem grösseren Schritt: `npm run check`. Rot heisst: Technik oder Inhalt kaputt → zuerst reparieren.
 - **Ohne Schlüssel** (direkt in Code gebaut): nach dem Bau einen `bolder`-Durchgang machen («mutiger»), damit die Seite nicht brav bleibt.
-- **Mehr Mut auf Zuruf** nach dem Bau: Sagt Simon «zu brav», «mutiger» oder «geh über die Grenzen» → impeccable `bolder`, bei «über die Grenzen» `overdrive`.
+- **Mehr Mut auf Zuruf** nach dem Bau: Sagt Simon «zu brav» oder «mutiger» → impeccable `bolder`; sagt er «geh über die Grenzen» → `overdrive`.
 
 ## 7. Prüfen
 1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben. Höchstens **drei** Prüfrunden; was danach offen ist, Simon als Liste nennen und in der Kunden-Notiz unter `## Wartet auf` festhalten.
 2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
 3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
-4b. **Kopier-Kontrolle** (nur mit Inspiration): Aus den Aufnahmen in `Inspiration/` drei bis fünf markante Sätze oder Überschriften pro Quelle notieren und im gebauten `dist/` suchen – Treffer = kopiert → umschreiben. Prüfen, dass keine Bilddatei aus `Inspiration/` in `public/` oder `src/` gelandet ist. Ergebnis Simon in einem Satz nennen.
+4b. **Kopier-Kontrolle** (nur mit Inspiration): Aus den Aufnahmen in `Inspiration/` pro Quelle fünf markante Wortgruppen (Überschriften, Slogan, typische Sätze; je vier bis sechs Wörter) notieren und mit **Bash** im gebauten `dist/` suchen – das Grep-Werkzeug überspringt `dist/`, weil der Ordner in `.gitignore` steht:
+```bash
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; cd "$REPO" && npm run build >/dev/null && grep -rliF -e "<wortgruppe 1>" -e "<wortgruppe 2>" dist/ ; echo "Treffer oben = kopiert"
+```
+Treffer → umschreiben. Bilder: Prüfsummen vergleichen, dann fällt auch eine umbenannte Kopie auf:
+```bash
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; cd "$REPO" && cksum "$VAULT/07 Anhänge/<Betrieb>/Inspiration/"* | cut -d' ' -f1,2 | sort > /tmp/inspo.sum; find public src -type f -exec cksum {} + | cut -d' ' -f1,2 | sort | comm -12 /tmp/inspo.sum - ; echo "Zeilen oben = Inspirations-Bild im Projekt"
+```
+Ergebnis Simon in einem Satz nennen.
 5. Zuerst `npx astro preview stop` (eine Vorschau läuft im Hintergrund weiter und zeigt sonst evtl. ein anderes Kundenprojekt), dann `npx astro preview`, Seitentitel prüfen (muss der Name des Betriebs sein) und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
