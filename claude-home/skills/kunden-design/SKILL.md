@@ -5,7 +5,7 @@ description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impecc
 
 # Kunden-Design
 
-Lehrmodus beachten. Zusätzlich hier: **vor jedem Schritt in ein bis zwei Sätzen ohne Fachwörter sagen, was jetzt passiert und warum.**
+Lehrmodus beachten. Wird der Skill für eine **Umgestaltung** aufgerufen (nicht aus `neuer-kunde`), gilt Simons Regel «Grilling vor grösseren Vorhaben»: zuerst klären, was an der bisherigen Gestaltung nicht passt. Zusätzlich hier: **vor jedem Schritt in ein bis zwei Sätzen ohne Fachwörter sagen, was jetzt passiert und warum.**
 
 ## Grundsätze
 - Jede Seite bekommt eine eigene Gestaltung. Die Vorlage ist ein roher Platzhalter und kein Vorbild.
@@ -46,9 +46,9 @@ Jedes vorhandene Foto ansehen und kurz beurteilen: scharf? gutes Licht? mindeste
 
 ## 3. Sperrliste aus bisherigen Kunden
 ```bash
-source ~/.config/webwerkstatt/config.env; for f in "$VAULT/02 Kunden/"*.md; do echo "== $f"; awk '/^## Gestaltung/{a=1;next} /^## /{a=0} a' "$f"; done
+source ~/.config/webwerkstatt/config.env; for f in "$VAULT/02 Kunden/"*.md; do echo "== $f"; awk '/^## Gestaltung/{a=1;next} /^## /{a=0} a' "$f" | grep -v -- ':\*\* (' ; done
 ```
-Daraus zwei Listen bilden: **Schriftpaare** (Titel / Text) und **Aufbau-Ideen**. Der aktuelle Kunde selbst zählt nicht. Ein Schriftpaar gilt als wiederholt, wenn Titel- **und** Textschrift gleich sind. Eine Aufbau-Idee gilt als wiederholt, wenn der Einstieg (was man ohne Scrollen sieht: z.B. «Vollbild-Foto mit Name», «Name gross auf Farbfläche», «Karte sofort sichtbar») **und** die Reihenfolge der Hauptabschnitte gleich sind. Hauptabschnitte sind Angebot/Karte, Öffnungszeiten, Kontakt/Anfahrt, Über uns, Fotos – Kopf, Fuss, Impressum und Datenschutz zählen nicht. Anderer Einstieg **oder** andere Reihenfolge = erlaubt. Farben dürfen sich wiederholen.
+Felder, die noch in Klammern stehen («(… z.B. …)»), sind leere Vorlagen-Beispiele und zählen nicht – der Befehl filtert sie. Daraus zwei Listen bilden: **Schriftpaare** (Titel / Text) und **Aufbau-Ideen**. Der aktuelle Kunde selbst zählt nicht. Ein Schriftpaar gilt als wiederholt, wenn Titel- **und** Textschrift gleich sind. Eine Aufbau-Idee gilt als wiederholt, wenn der Einstieg (was man ohne Scrollen sieht: z.B. «Vollbild-Foto mit Name», «Name gross auf Farbfläche», «Karte sofort sichtbar») **und** die Reihenfolge der Hauptabschnitte gleich sind. Hauptabschnitte sind Angebot/Karte, Öffnungszeiten, Kontakt/Anfahrt, Über uns, Fotos – Kopf, Fuss, Impressum und Datenschutz zählen nicht. Anderer Einstieg **oder** andere Reihenfolge = erlaubt. Farben dürfen sich wiederholen.
 
 ## 4. Produkt-Steckbrief (impeccable `init`)
 impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Material vorbefüllen, Simon nur bestätigen oder ergänzen lassen. Ergebnis: `PRODUCT.md` im Repo.
@@ -58,7 +58,7 @@ impeccable ausdrücklich so beauftragen:
 > «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. Code-led, keine Bildentwürfe.»
 
 - Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
-- Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind.
+- Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
 - **Simon wählt** die Richtung.
 - **Option für den Kunden:** Will Simon dem Kunden Richtungen zeigen, die Entscheidungsseite per Playwright abfotografieren und nach `$VAULT/07 Anhänge/<Betrieb>/Richtungen/` speichern. Mail an den Kunden nur als Entwurf.
 
@@ -69,14 +69,14 @@ impeccable baut die gewählte Richtung. Dazu:
 - Nach jedem grösseren Schritt: `npm run check`. Rot heisst: Technik oder Inhalt kaputt → zuerst reparieren.
 
 ## 7. Prüfen
-1. impeccable-Prüfung (`critique` / Detektor) auf die gebaute Seite, Befunde beheben.
+1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben.
 2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
 3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
 5. `npx astro preview` und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
-- impeccable schreibt am Schluss `DESIGN.md` und `.impeccable/design.json` aus der gebauten Seite. **Beide müssen existieren**, sonst ist die Gestaltung nicht fertig (und ohne `DESIGN.md` veröffentlicht GitHub die Seite nicht). Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/config.json`, `.impeccable/design.json` und den Code.
+- impeccable schreibt am Schluss `DESIGN.md` und `.impeccable/design.json` aus der gebauten Seite. **Beide müssen existieren**, sonst ist die Gestaltung nicht fertig (und ohne `DESIGN.md` veröffentlicht GitHub die Seite nicht). Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/design.json`, `.impeccable/config.json` (nur falls entstanden) und den Code.
 ```bash
 cd ~/Developer/<slug> && git add -A && { git diff --cached --quiet || git commit -m "Gestaltung: <Richtung in drei Worten>"; }
 ```
