@@ -26,6 +26,10 @@ test("openai-key: anzeigen, kopieren oder umleiten wird gesperrt", () => {
     `curl -s -H "Authorization: Bearer $(< ${KEY})" https://api.openai.com/v1/models`,
     "cat ~/.config/webwerkstatt/openai-*",
     "cp ~/.config/webwerkstatt/* /tmp/",
+    "grep -r sk- ~/.config/webwerkstatt",
+    "grep -r . ~/.config/webwerkstatt/",
+    "cp -r ~/.config/webwerkstatt /tmp/x",
+    "find ~/.config/webwerkstatt -type f -exec head {} +",
   ])
     assert.equal(bash(cmd), "deny", cmd);
 });
@@ -69,6 +73,9 @@ test("Bestehender Schutz bleibt", () => {
   assert.equal(bash("cat ~/.config/webwerkstatt/cloudflare-token"), "deny");
   assert.equal(bash('gh secret set CLOUDFLARE_API_TOKEN --repo "a/b" < ~/.config/webwerkstatt/cloudflare-token'), "");
   assert.equal(bash("source ~/.config/webwerkstatt/config.env; npm run check"), "");
+  assert.equal(bash("ls ~/.config/webwerkstatt/"), "");
+  assert.equal(bash("mkdir -p ~/.config/webwerkstatt && touch ~/.config/webwerkstatt/openai-key"), "");
+  assert.equal(bash("grep GITHUB_USER ~/.config/webwerkstatt/config.env"), "");
   assert.equal(entscheid("Read", { file_path: "/x/.config/webwerkstatt/cloudflare-token" }), "deny");
   assert.equal(entscheid("Read", { file_path: "src/content/site.json" }), "");
 });

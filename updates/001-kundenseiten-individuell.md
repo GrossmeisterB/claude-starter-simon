@@ -59,7 +59,7 @@ Die Datei **nicht** ersetzen. Nur zwei Stellen angleichen:
 cd ~/claude-starter-simon-update && for f in alt/claude-home/CLAUDE.md ~/.claude/CLAUDE.md neu/claude-home/CLAUDE.md; do echo "=== $f"; awk '/^## Webseiten-Standard/{a=1} /^## Second Brain/{a=0} a' "$f"; grep -n "Bei Webseiten heisst Nachweis" "$f"; done
 ```
 - Abschnitt `## Webseiten-Standard` bei Simon gleich wie in `alt` → mit dem Edit-Werkzeug durch die Fassung aus `neu` ersetzen. Gleich wie `neu` → nichts tun. Sonst → zeigen, fragen, zusammenführen.
-- Zeile «Bei Webseiten heisst Nachweis: …»: Ist sie bei Simon gleich wie in `alt` → «Build läuft durch» durch «`npm run check` ist grün» ersetzen. Hat Simon sie umformuliert → zeigen, fragen.
+- Zeile «Bei Webseiten heisst Nachweis: …»: Ist sie bei Simon gleich wie in `alt` → «Build läuft durch» durch «`npm run check` ist grün» ersetzen. Gleich wie in `neu` → nichts tun. Hat Simon sie umformuliert → zeigen, fragen.
 - Lehrmodus-Status `(aktiv)`/`(aus)` und alle anderen Abschnitte bleiben, wie sie bei Simon sind.
 
 ## 4. Einstellungen
@@ -127,6 +127,7 @@ Erwartet: `impeccable-engine 0.1.11`. Das Gestaltungs-Werkzeug ist bewusst auf e
 ## 9. Bildentwürfe einrichten (freiwillig)
 
 Erklären: «Wenn du willst, kann ich dir jede Gestaltungs-Richtung zuerst als Bild der fertigen Seite zeigen, bevor ich sie baue. Dafür braucht es ein Konto bei OpenAI (der Firma hinter ChatGPT) mit einem Schlüssel. Jedes Bild kostet ein paar Rappen, du legst ein Monatslimit fest. Ohne das baue ich direkt, das ist gratis und funktioniert auch gut. Willst du es jetzt einrichten, später, oder gar nicht?»
+Zuerst prüfen, ob schon eingerichtet: `wc -c < ~/.config/webwerkstatt/openai-key` – eine Zahl über 100 → nur den Probeaufruf (Punkt 8 unten) machen, dann weiter mit Schritt 10. Fehlermeldung oder 0 → Simon fragen wie oben.
 - **Später / gar nicht** → überspringen, in der Prüfliste «Bildentwürfe: nein» bzw. «später» eintragen. Nachholen: «richte die Bildentwürfe ein» → diesen Schritt ausführen.
 - **Jetzt** → Simon klickt selbst. **Ein Schritt pro Nachricht**, erst nach seinem «ok» der nächste:
   1. platform.openai.com öffnen, mit eigenem Konto anmelden oder registrieren.

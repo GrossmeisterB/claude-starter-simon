@@ -36,6 +36,9 @@ if (tool === "Bash") {
   if (/webwerkstatt[\\/][^\s"';|&]*[*?[]/.test(cmd)) {
     emit("deny", "Platzhalter wie * im Ordner ~/.config/webwerkstatt sind gesperrt – dort liegen Schlüssel. Dateien einzeln mit Namen ansprechen.");
   }
+  if (/webwerkstatt[\\/]?(?=["'\s;|&)]|$)/.test(cmd) && /(^|[\s;&|(`])(grep|egrep|rg|ag|find|cp|tar|zip|rsync|xargs|cat|head|tail)(?=\s)/.test(cmd)) {
+    emit("deny", "Den ganzen Ordner ~/.config/webwerkstatt durchsuchen oder kopieren ist gesperrt – dort liegen Schlüssel. Dateien einzeln mit Namen ansprechen (z.B. config.env).");
+  }
   if (/openai-key/.test(cmd)) {
     const rest = cmd
       .replace(new RegExp(String.raw`\$\(<\s*${P}\s*\)`, "g"), "")
