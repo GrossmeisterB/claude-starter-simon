@@ -664,3 +664,114 @@ git push origin main v1 v2
 Prüfen: `curl -sI https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/tags/v1.zip` → 302/200; ZIP von `main` enthält `updates/001-…`.
 - [ ] **Step 4: Satz für Simon** an Roland geben (aus README «Updates holen») + Prüfliste. **Fertig erst**, wenn Simon das Update gefahren und Roland die Prüfliste zurückbekommen hat.
 - [ ] **Step 5: Vault** – `02 Projekte/Simon Claude-Setup.md` Status aktualisieren.
+
+---
+
+# Teil 2 – Gestaltungsfreiheit und Inspiration (Spec E1–E9)
+
+> Reihenfolge der Ausführung: Tasks 9–14, **danach** Task 8 (Schluss-Review + Veröffentlichung). Knecht-Pflicht wie Teil 1. Global Constraints aus Teil 1 gelten weiter; zusätzlich:
+> - OpenAI-Schlüssel nur per `$(< ~/.config/webwerkstatt/openai-key)` im selben Befehl; nie ausgeben, nie in Dateien/Settings schreiben.
+> - Inspiration: Prinzipien übernehmen, nie Texte, Bilder, Logos, Code oder Markenzeichen.
+> - Fertige Seite: KI-Bilder nur Hintergründe/Illustrationen.
+
+## Review Focus (Teil 2)
+1. **Zusatzseite ohne Darstellung:** Simon legt `src/content/seiten/events.md` an, die Gestaltung zeigt sie nirgends → Check muss rot werden → Task 9.
+2. **Mehrseitige Seite verliert Startseiten-Minimum:** Telefon nur auf `/kontakt` → rot → Task 9.
+3. **Schlüssel landet im Verlauf/Repo:** Befehl mit `cat`/`echo` auf `openai-key` oder Read der Datei → Hook sperrt → Task 10.
+4. **Inspiration kopiert:** Texte/Logos der Inspo-Seite tauchen auf der Kundenseite auf → `kunden-design` prüft vor dem Commit per Textsuche → Task 11, geprüft in Task 13.
+5. **Kein Schlüssel vorhanden:** `kunden-design` muss ohne Fehler code-led + `bolder` laufen → Task 11, geprüft in Task 13 (Café Bergblick-Lauf war bereits code-led).
+
+### Task 9: Mehrseitigkeit + Zusatzinhalte in Vorlage und Technik-Test
+
+**Files:** Create `kunden-vorlage/src/content.config.ts`, `kunden-vorlage/src/content/seiten/geschichte.md`; Modify `kunden-vorlage/tests/technik.test.mjs`, `kunden-vorlage/src/pages/index.astro`, `kunden-vorlage/UEBERGABE.md`.
+
+**Interfaces:** Produces Collection `seiten` (Frontmatter `titel: string`, optional `reihenfolge: number`), Test-Helfer `alleSeiten()` (alle `dist/**/*.html` ausser 404). Consumed by Task 11 (`kunden-design`), Task 12 (`gastro-texte`).
+
+- [ ] **Step 1: Failing Tests** – in `technik.test.mjs`:
+  - `alleSeiten()` = rekursiv alle `.html` unter `dist/` ausser `404.html`.
+  - Test «alle Inhalte aus site.json stehen auf der Website»: wie bisher, aber `sichtbar()`-Text **aller** Seiten zusammen (statt nur `index.html`).
+  - Neuer Test «Startseite zeigt Name, Telefon und Öffnungszeiten»: `index.html` sichtbar enthält `site.name`, `kontakt.telefon` und für jede Öffnungszeit-Zeile `tage` (kompakt verglichen).
+  - Neuer Test «jede Zusatzseite erscheint auf der Website»: für jede Datei `src/content/seiten/*.md` (Frontmatter per Regex `^titel:\s*(.+)$` lesen) muss `titel` in mindestens einer gebauten Seite sichtbar stehen.
+  - Neuer Test «Impressum und Datenschutz sind von jeder Seite aus verlinkt»: ersetzt den bisherigen Startseiten-Link-Test, prüft alle Seiten.
+  - Beispieldatei `src/content/seiten/geschichte.md` (`titel: Unsere Geschichte`, 2 Sätze Mustertext) anlegen.
+  Run `npm run check` → Expected: FAIL nur «jede Zusatzseite erscheint» (Geschichte fehlt).
+- [ ] **Step 2: Collection + rohe Darstellung** – `src/content.config.ts`:
+```ts
+import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
+import { z } from "astro/zod";
+
+const seiten = defineCollection({
+  loader: glob({ base: "./src/content/seiten", pattern: "**/[^_]*.md" }),
+  schema: z.object({ titel: z.string(), reihenfolge: z.number().optional() }),
+});
+
+export const collections = { seiten };
+```
+  `index.astro`: vor Kontakt alle Einträge (sortiert nach `reihenfolge`, dann `titel`) als `<section><h2>{titel}</h2><Content /></section>` rendern (`getCollection("seiten")`, `render(entry)`).
+  Run `npm run check` → PASS (alle). Mutationsproben: (a) Geschichte-Section im Template auskommentieren → «jede Zusatzseite» FAIL; (b) Telefon aus `index.astro` entfernen, aber im Fuss behalten → bleibt grün (Fuss ist auf der Startseite) – dann Telefon im Fuss **und** Kontakt entfernen → «Startseite zeigt …» FAIL. Zurücksetzen.
+- [ ] **Step 3: UEBERGABE.md** – Abschnitt «Inhalte ändern» ergänzen: «Weitere Themen (Geschichte, Events, Bankett …) stehen je in einer Datei unter `src/content/seiten/` (oben `titel:`). Datei anlegen = neues Thema auf der Website.»
+- [ ] **Step 4: Commit + Knecht** (Test + content.config + index): «Falsch-rot bei frei gestalteten Mehrseitern? Collection-Schema robust (leere Datei, fehlender titel)?»
+
+### Task 10: Schlüssel-Schutz im Hook
+
+**Files:** Modify `claude-home/hooks/block-sensitive.mjs`; Create `claude-home/hooks/block-sensitive.test.mjs`.
+
+- [ ] **Step 1: Failing Test** – Hook per `execFileSync(node, [hook], {input: JSON})` aufrufen:
+  - Bash `cat ~/.config/webwerkstatt/openai-key` → `deny`.
+  - Read `…/.config/webwerkstatt/openai-key` → `deny`.
+  - Bash `OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)" x/impeccable generate-image` → kein deny (leere Ausgabe).
+  - Regression: Bash `cat ~/.config/webwerkstatt/cloudflare-token` → `deny`; Read `src/content/site.json` → leer.
+  Run → FAIL (openai-key nicht gesperrt).
+- [ ] **Step 2: Fix** – Regex in Bash-Zweig `(cloudflare-token|cloudflare-account-id|openai-key)`, File-Zweig `fp.includes("/.config/webwerkstatt/cloudflare-") || fp.endsWith("/.config/webwerkstatt/openai-key")`; deny-Text nennt beide Dateien. Run → PASS.
+- [ ] **Step 3: Commit + Knecht**: «Umgehungen (z.B. `cp`, `<` in andere Datei, `$(<…)` mit echo)?»
+
+### Task 11: `kunden-design` – Seiten, Inspiration, Bildentwürfe, mutiger
+
+**Files:** Modify `claude-home/skills/kunden-design/SKILL.md`, `vault/Templates/Kunde.md`.
+
+- [ ] **Step 1: Kunde.md** – nach `## Gestaltung` Abschnitt `## Inspiration` mit Feldern `- **Quellen:** (Links oder Bilder in 07 Anhänge/<Betrieb>/Inspiration/)`, `- **Was gefällt:**`, `- **Modus:** (so in der Art / genau so)`.
+- [ ] **Step 2: SKILL.md** – Änderungen (Wortlaut im Commit, hier die verbindlichen Inhalte):
+  - **Grundsätze:** «Seitenpfade bleiben» → «`/impressum`, `/datenschutz`, 404 bleiben; weitere Seiten frei». Neu: Inspiration-Regel (Prinzipien, nie kopieren); KI-Regel (Entwürfe ja, auf der Seite nur Hintergründe/Illustrationen).
+  - **Präambel** um Schlüssel ergänzen: `[ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)";` – nur in Befehlen, die den impeccable-Launcher aufrufen.
+  - **Neuer Schritt «Inspiration»** (nach «Material sichten»): Quellen aus Kunden-Notiz `## Inspiration` + `04 Ressourcen/Inspiration.md`; keine → Simon fragen («Hast du Inspiration oder Wünsche vom Kunden? Tipps: `04 Ressourcen/Gestaltung mit Claude.md`»), weiter ohne ist erlaubt. Webseiten per Playwright 390×844 + 1280×800 ganzseitig fotografieren (Cookie-Banner schliessen), nach `07 Anhänge/<Betrieb>/Inspiration/`. Pro Quelle Analyse in Alltagssprache: Wirkung (Aufbau, Schrift, Farbe, Bildsprache, Bewegung, Details) und «nicht übernehmen» (Marke, Texte, Bilder). Simon bestätigt/korrigiert, Modus «so in der Art»/«genau so» festhalten.
+  - **Neuer Schritt «Umfang»:** One-Pager oder mehrere Seiten, mit Simon nach Inhaltsmenge entscheiden; Zusatzthemen als `src/content/seiten/*.md` (Texte über `gastro-texte`); Startseite zeigt mindestens Name, Telefon, Öffnungszeiten.
+  - **Schritt «Richtung»:** «so in der Art» → aus der Analyse eine eigene Richtung formulieren und **zusätzlich** zu den gewürfelten zeigen (Karte «Aus deiner Inspiration»); «genau so» → als vom Nutzer festgelegte Richtung an impeccable geben (kein Würfel, impeccable liest dann die Modus-Datei). Sperrliste gilt auch hier.
+  - **Bildentwürfe:** Schlüssel vorhanden → beim `init` auf impeccables Frage «comp» antworten (`.impeccable/config.json` `buildPath: "comp"`), Richtungen als Bildentwürfe, Simon wählt am Bild. Kein Schlüssel → code-led, und nach dem Bau ein `bolder`-Durchgang («mutiger»). Auftrag an impeccable: «Code-led, keine Bildentwürfe» nur noch im Fall ohne Schlüssel.
+  - **Prüfen:** vor dem Commit Kopier-Kontrolle: markante Sätze/Überschriften der Inspo-Seiten (aus den Aufnahmen) dürfen nicht im `dist/` stehen; keine Bilddatei aus den Aufnahmen in `public/`/`src/`.
+  - **Mehr Mut auf Zuruf:** Sagt Simon «zu brav»/«mutiger»/«über die Grenzen» → impeccable `bolder` bzw. `overdrive`.
+- [ ] **Step 3: Trockenprüfung** wie Task 3 (Präambel mit/ohne Schlüsseldatei in Test-HOME: `[ -s … ]` liefert jeweils das Erwartete, ohne den Schlüssel auszugeben).
+- [ ] **Step 4: Commit + Knecht** (SKILL.md + impeccable `new-work.md` Z. 41–61, `init.md` Z. 110–116): «Widerspricht der Ablauf impeccable (comp-Frage, pinned direction, Zusatzkarte)? Kopierschutz wirksam?»
+
+### Task 12: Anleitung, Inspirations-Sammlung, gastro-texte
+
+**Files:** Create `vault/04 Ressourcen/Gestaltung mit Claude.md`, `vault/04 Ressourcen/Inspiration.md`; Modify `claude-home/skills/gastro-texte/SKILL.md`.
+
+- [ ] **Step 1: «Gestaltung mit Claude.md»** – eine Seite, Alltagssprache, Abschnitte: Inspiration sammeln (Quellen: Seiten von Lokalen, die man mag, Awwwards/Siteinspire-Kategorien Restaurant, Instagram; ablegen in Kunden-Notiz oder Sammlung; dazu schreiben, *was* gefällt), Fotos (gut genug = scharf, hell, ≥1600 px, echt; lieber keine als schlechte; Fotograf als Zusatz), was Claude damit macht (Analyse, Richtungen, «so in der Art»/«genau so», Bildentwürfe falls Schlüssel), Sätze für mehr Mut («mach es mutiger», «geh über die Grenzen», «zeig mir eine ganz andere Richtung»), was nie geht (fremde Texte/Bilder/Logos), mehrere Seiten und Zusatzthemen.
+- [ ] **Step 2: «Inspiration.md»** – Frontmatter wie Vault-Regeln, Tabelle `| Quelle | Was gefällt | Für welche Art Betrieb |` leer mit einer Beispielzeile in Klammern.
+- [ ] **Step 3: gastro-texte** – Abschnitt «Zusatzthemen → `src/content/seiten/<thema>.md`» (Frontmatter `titel:`, optional `reihenfolge:`, Text 60–200 Wörter, Schweizer Schreibweise), Ablauf Schritt 4 entsprechend.
+- [ ] **Step 4: Commit + Knecht** (Anleitung): «Für einen 22-Jährigen ohne Design-Ausbildung verständlich? Fachwörter?»
+
+### Task 13: Test – Weinbar mit Inspiration und Bildentwürfen
+
+- [ ] **Step 1:** Zwei Inspirationsseiten aussuchen (eine typografisch, eine bildstark; reale Gastro- oder Design-Seiten), Roland kurz zeigen.
+- [ ] **Step 2:** sim7 auf aktuellen Stand bringen (Skills + Vorlage neu kopieren), Betrieb «Weinbar Rebstock, Biel» anlegen: `site.json` mit Weinkarte, Zusatzthemen `geschichte.md`, `bankett.md`, `degustationen.md`; Kunden-Notiz mit `## Inspiration` (beide Links, Modus «so in der Art», «Was gefällt» je ein Satz). Schlüssel: `OPENAI_API_KEY` über Rolands Datei `~/.config/webwerkstatt/openai-key` (Präambel liest `$HOME/.config/…` → im Sim-HOME einen Symlink auf Rolands Datei legen, nie kopieren).
+- [ ] **Step 3:** Frischer Agent führt `kunden-design` aus (wie Task 7, Simon simuliert). Erwartet: Inspo-Aufnahmen + Analyse, Bildentwürfe (comp-led), Zusatzkarte «Aus deiner Inspiration», Mehrseiter oder begründeter One-Pager, `npm run check` grün, Kopier-Kontrolle protokolliert.
+- [ ] **Step 4:** Selbst nachprüfen (check, DESIGN.md, Seiten in `dist/`, keine Inspo-Texte in `dist/`, `.impeccable/config.json` `buildPath: comp`), Screenshots, Galerie um «Weinbar» erweitern (gleiche Datei, Republish). OpenAI-Verbrauch des Laufs aus den impeccable-Ausgaben («billed to your OpenAI key») zusammenzählen und Roland nennen.
+- [ ] **Step 5:** Befunde in `kunden-design`/Anleitung einarbeiten, Commit, Knecht. Roland Bescheid: Schlüssel kann gelöscht werden.
+
+### Task 14: Update 001 + SETUP ergänzen, Simulation wiederholen
+
+**Files:** Modify `updates/001-kundenseiten-individuell.md`, `SETUP.md`, `README.md` (nur falls nötig).
+
+- [ ] **Step 1: Update 001** – neue Schritte (gleiche Regeln: vergleichen, nicht blind überschreiben):
+  - Hooks: `block-sensitive.mjs` gegen `alt` vergleichen → gleich: ersetzen, sonst fragen.
+  - `gastro-texte`: wie `neuer-kunde` (vergleichen, zusammenführen).
+  - Vault: `04 Ressourcen/Gestaltung mit Claude.md` und `Inspiration.md` anlegen, falls nicht vorhanden; `Templates/Kunde.md` bekommt `## Inspiration` (gleicher Mechanismus wie `## Gestaltung`, bestehende Kunden-Notizen nach Rückfrage).
+  - **Optionaler Schritt «Bildentwürfe»** (Simon klickt, **ein Schritt pro Nachricht**): platform.openai.com → Projekt anlegen → Monatslimit setzen → Zahlungsart → Schlüssel erstellen (Berechtigung Restricted, nur Images = Request) → Datei per Editor (`notepad "$(cygpath -w ~/.config/webwerkstatt/openai-key)"`, wie Cloudflare-Token) → Länge prüfen (`wc -c`) → Probeaufruf (nur HTTP-Status ausgeben). Bei Fehler «organization must be verified»: Simon erklären, Verifizierung (Ausweis + Selfie) dauert evtl. Tage; bis dahin code-led. Simon kann den Schritt überspringen.
+  - Prüfliste ergänzen: Hook sperrt openai-key, Anleitungs-Notiz vorhanden, Bildentwürfe ja/nein.
+- [ ] **Step 2: SETUP.md** – Phase 4 neuer optionaler Unterpunkt 4d «Bildentwürfe (OpenAI)» mit denselben Schritten; Phase 5 kopiert Vault (Notizen kommen automatisch mit).
+- [ ] **Step 3:** Simulation wie Task 6 wiederholen (Auto-Mode aus, Sonnet, zwei Läufe; Simon: Bildentwürfe-Schritt «später»). Endzustand selbst nachprüfen.
+- [ ] **Step 4: Commit + Knecht.**
+
+Danach: **Task 8** (Schluss-Review über den ganzen Branch, Risiken, Go, Push + Tags).

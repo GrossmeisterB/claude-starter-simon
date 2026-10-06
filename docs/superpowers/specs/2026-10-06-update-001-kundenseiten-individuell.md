@@ -29,7 +29,7 @@ Jede Kundenseite bekommt eine eigene Gestaltung. Seiten verschiedener Kunden gle
 ## Nicht im Umfang
 
 - Bestehende Kundenrepos automatisch umbauen (es gibt keine).
-- Eigenes Bild-API für Simon.
+- ~~Eigenes Bild-API für Simon.~~ Aufgehoben durch Erweiterung E7/E8 (OpenAI-Schlüssel optional).
 - Updates von impeccable über `e103efe` hinaus (erst mit neuem skill/engine-Release-Paar).
 
 ## Review-Pflicht (Rolands Regel)
