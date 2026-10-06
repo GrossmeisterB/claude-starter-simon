@@ -51,7 +51,10 @@ gh secret set CLOUDFLARE_ACCOUNT_ID --repo "$GITHUB_USER/$SLUG" < ~/.config/webw
 npm install
 npm run check
 ```
-`npm run check` baut die Seite und prüft die Technik (Suchmaschinen-Sperre, Angaben für Google, Inhalte aus `site.json`).
+`npm run check` baut die Seite und prüft die Technik (Suchmaschinen-Sperre, Angaben für Google, Inhalte aus `site.json`). Dann die Grundeinstellungen festhalten (noch nicht hochladen):
+```bash
+cd ~/Developer/<slug> && git add -A && { git diff --cached --quiet || git commit -m "Kunde <Betrieb> eingerichtet"; }
+```
 
 ### 6. Kunden-Notiz anlegen
 - `02 Kunden/<Betrieb>.md` aus `Templates/Kunde.md` anlegen und Platzhalter füllen (`repo`, Steckbrief). `demo_url`/`staging_url` folgen in Schritt 10.
@@ -63,7 +66,7 @@ Skill `kunden-design` vollständig ausführen. Erst wenn er abgeschlossen ist (C
 ### 8. Erste Demo veröffentlichen
 Simon kurz sagen: „Ich pushe jetzt auf `main` – das erstellt die Demo unter `https://<slug>.<subdomain>.workers.dev`. Sie ist für Suchmaschinen gesperrt, und noch hat niemand den Link. Die Seite hat jetzt ihre eigene Gestaltung." Sein Go abwarten.
 ```bash
-git add -A && { git diff --cached --quiet || git commit -m "Kunde <Betrieb> eingerichtet"; }
+git status --short
 git push origin main
 sleep 8
 RUN=$(gh run list --branch main --limit 1 --json databaseId --jq '.[0].databaseId')
@@ -79,7 +82,7 @@ gh run watch "$RUN" --exit-status
 gh run view "$RUN" --log | grep -o 'https://[a-z0-9.-]*workers.dev' | sort -u
 ```
 Die ausgegebene Vorschau-URL ist massgebend. Weicht sie vom erwarteten Muster ab, die echte verwenden und in Kunden-Notiz und `UEBERGABE.md` eintragen.
-Den allerersten Run, den GitHub beim Anlegen aus der Vorlage eventuell startet, ignorieren – da fehlten die Secrets noch.
+Den allerersten Run, den GitHub beim Anlegen aus der Vorlage eventuell startet, ignorieren – er veröffentlicht nichts, weil noch keine `DESIGN.md` existiert (oder die Secrets noch fehlten).
 
 ### 9. Beweis
 - `curl -sI https://<slug>.<subdomain>.workers.dev` → `200` und `x-robots-tag: noindex`
@@ -87,7 +90,7 @@ Den allerersten Run, den GitHub beim Anlegen aus der Vorlage eventuell startet, 
 - Schlägt ein Run fehl: `gh run view "$RUN" --log-failed` lesen und Ursache erklären, nicht blind wiederholen.
 
 ### 10. Vault und Abschluss
-- Kunden-Notiz: `demo_url`, `staging_url` eintragen. `## Status`: „Demo live (eigene Gestaltung, noch Mustertexte)". `## Wartet auf`: was als Nächstes von wem kommt.
+- Kunden-Notiz: `demo_url`, `staging_url` eintragen. `## Status`: „Demo live (eigene Gestaltung, noch Mustertexte)". `## Wartet auf`: ergänzen (nicht ersetzen – `kunden-design` hat dort evtl. schon «gute Fotos» eingetragen), was als Nächstes von wem kommt.
 - In die heutige Daily Note unter `## 💬 Kunden` eine Zeile schreiben.
 
 Kurz zusammenfassen: Demo-URL, Vorschau-URL, Repo-Link, nächster Schritt (meist: Texte mit `gastro-texte`, Speisekarte vom Kunden holen).

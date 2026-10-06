@@ -82,6 +82,7 @@ Simon sagen: «Dieses Projekt stammt aus der alten Vorlage. Ich kopiere zuerst d
 ```bash
 V=~/Developer/kunden-vorlage; REPO="$HOME/Developer/<slug>"
 cp -R "$V/.claude" "$V/tests" "$V/.gitattributes" "$REPO"/
+cp "$V/.github/workflows/deploy.yml" "$REPO/.github/workflows/deploy.yml"
 cat "$V/.gitignore" "$REPO/.gitignore" | sort -u > "$REPO/.gitignore.neu" && mv "$REPO/.gitignore.neu" "$REPO/.gitignore"
 ```
-Dann `package.json` um das Script `check` aus `$V/package.json` ergänzen, in `deploy.yml` die Zeile `- run: node --test tests/technik.test.mjs` nach `npm run build` einfügen, `farben` aus `site.json` entfernen und die Stellen, die `site.farben` verwenden, durch feste Werte ersetzen (werden in Schritt 6 ohnehin neu gestaltet). `npm run check` → grün, committen, weiter bei Schritt 1.
+Dann `package.json` um das Script `check` aus `$V/package.json` ergänzen, `farben` aus `site.json` entfernen und die Stellen, die `site.farben` verwenden, durch feste Werte ersetzen (werden in Schritt 6 ohnehin neu gestaltet). `npm run check` → grün, committen, weiter bei Schritt 1.
