@@ -775,3 +775,16 @@ export const collections = { seiten };
 - [ ] **Step 4: Commit + Knecht.**
 
 Danach: **Task 8** (Schluss-Review über den ganzen Branch, Risiken, Go, Push + Tags).
+
+## Knecht-Auflagen Teil 2 (verbindlich, überschreiben die Tasks oben wo abweichend)
+
+- **K1 (Task 11, belegt `new-work.md` Z. 49):** Keine zusätzliche Inspirations-Karte. Die Inspirations-Richtung belegt den Platz der Pick-Karte («IMPECCABLE'S PICK», «one pick card, never two»); zieht der Würfel sie selbst als Lead, entfällt die Pick-Karte. «Genau so» = festgelegte Richtung («pinned direction beats the roll»); `kunden-design` hält sie im Surface-Brief unter `## Direction contract` fest und sagt impeccable ausdrücklich «pinned».
+- **K2 (Task 11, `init.md` Z. 112–116):** Die Frage «mit Bildentwürfen oder direkt in Code bauen» stellt impeccable **Simon** (alltagssprachlich erklärt: Bild zuerst = kostet ein paar Rappen pro Entwurf, sieht man vorher; direkt in Code = gratis). `kunden-design` empfiehlt «Bildentwürfe», antwortet aber nicht selbst.
+- **K3 (Task 10):** Hook zusätzlich: Grep- und Glob-Werkzeug mit `path`/`pattern`/`glob` unter `.config/webwerkstatt` → deny (ausser `config.env`). Bash: jede Erwähnung von `openai-key` ist nur in den Formen `"$(< ~/.config/webwerkstatt/openai-key)"`, `[ -s ~/.config/webwerkstatt/openai-key ]` und `wc -c < ~/.config/webwerkstatt/openai-key` erlaubt; jede andere Erwähnung → deny. Zusätzlich deny, wenn `OPENAI_API_KEY` zusammen mit einem Ausgabe-Verb (`echo|printf|env|printenv|set|export -p|cat`) vorkommt, ausser in der Präambel-Form `export OPENAI_API_KEY="$(< …)"`. Testfälle für Grep, Glob, `cut`, `node -e`, `printenv` ergänzen.
+- **K4 (Task 9):** `sichtbar()` entfernt zusätzlich alle Tags (`<[^>]+>` → Leerzeichen) vor `kompakt()`; gilt für alle Inhalts-Tests (Split-Typografie wie `<span>`-Ziffern darf nicht rot machen).
+- **K5 (Task 9 + 11):** Link-Test akzeptiert absolute, root-relative und relative Formen (`./impressum/`, `../impressum/`, mit/ohne `.html`), mit Wortgrenze. `kunden-design`: «Impressum und Datenschutz von **jeder** Seite aus verlinken».
+- **K6 (Task 9):** noindex-Test iteriert über `alleSeiten()` + `404.html`.
+- **K7 (Task 11, belegt `new-work.md` Z. 49):** «Mutiger»/«sicherer» während offener Richtungswahl = Re-Roll-Register (`--register bolder|safer`); nach dem Bau = Befehl `bolder` bzw. `overdrive` (in `SKILL.md` Z. 64 vorhanden).
+- **K8 (Task 12):** gastro-texte: Bilder in Zusatzthemen nur aus `07 Anhänge/<Betrieb>/` (gleiche Foto-Regeln wie kunden-design), abgelegt unter `src/assets/seiten/`, im Markdown referenziert; keine KI-Bilder von Essen/Lokal/Menschen.
+- **K9 (Task 13):** Sim-HOME aus dem aktuellen Branch neu aufbauen (inkl. neuem Hook aus `claude-home/hooks/`, damit der Schlüssel-Schutz mitgetestet wird); Aufbau-Befehle im Ledger festhalten.
+- **K10 (Task 13 Step 4):** Nach dem Lauf im Kundenrepo `grep -rIl "sk-" . --exclude-dir=node_modules` (nur Dateinamen ausgeben) und `git log -p | grep -c "sk-"` → beide leer/0.
