@@ -13,6 +13,8 @@ const text = (html) =>
     .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
     .replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? m);
 const kompakt = (s) => s.replace(/\s+/g, "");
+const sichtbar = (html) => html.replace(/^[\s\S]*?<body[^>]*>/i, "").replace(/<script[\s\S]*?<\/script>/gi, "");
+const link = (pfad) => new RegExp(`href=["'](https?://[^"']*)?/${pfad}(/|\\.html|/index\\.html)?["']`);
 
 const SEITEN = ["index.html", "404.html", "impressum/index.html", "datenschutz/index.html"];
 
@@ -27,7 +29,9 @@ test("noindex genau dann, wenn nicht live in Produktion", () => {
   }
   const robots = lies("robots.txt");
   assert.match(robots, indexierbar ? /Allow: \// : /Disallow: \//);
+  assert.match(robots, /User-agent: \*/);
   assert.equal(existsSync(datei("_headers")), !indexierbar);
+  if (!indexierbar) assert.match(lies("_headers"), /X-Robots-Tag: noindex/);
 });
 
 test("strukturierte Daten für Google stimmen mit site.json", () => {
@@ -39,14 +43,18 @@ test("strukturierte Daten für Google stimmen mit site.json", () => {
   assert.equal(ld.telephone, site.kontakt.telefon);
   assert.equal(ld.address.streetAddress, site.kontakt.strasse);
   assert.equal(ld.address.postalCode, site.kontakt.plz);
+  assert.equal(ld.address.addressLocality, site.kontakt.ort);
+  assert.equal(ld.email, site.kontakt.email);
   const erwartet = site.oeffnungszeiten.flatMap((o) => o.schema ?? []).length;
   assert.equal(ld.openingHoursSpecification.length, erwartet);
 });
 
 test("alle Inhalte aus site.json stehen auf der Startseite", () => {
-  const html = kompakt(text(lies("index.html")));
+  const html = kompakt(text(sichtbar(lies("index.html"))));
   const fehlt = [];
-  const muss = [site.name, site.kontakt.telefon, site.kontakt.strasse];
+  const k = site.kontakt;
+  const muss = [site.name, site.slogan, site.beschreibung, k.telefon, k.email, k.strasse, k.plz, k.ort];
+  if (site.hinweis) muss.push(site.hinweis);
   for (const g of site.speisekarte) {
     muss.push(g.titel);
     for (const d of g.gerichte) muss.push(d.name);
@@ -64,8 +72,8 @@ test("alle Inhalte aus site.json stehen auf der Startseite", () => {
 
 test("Impressum und Datenschutz sind von der Startseite verlinkt", () => {
   const html = lies("index.html");
-  assert.match(html, /href="\/impressum\/?"/);
-  assert.match(html, /href="\/datenschutz\/?"/);
+  assert.match(html, link("impressum"));
+  assert.match(html, link("datenschutz"));
 });
 
 test("Gestaltung steckt nicht in site.json", () => {
