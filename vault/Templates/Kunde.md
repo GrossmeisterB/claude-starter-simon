@@ -20,6 +20,13 @@ domain:
 ## Status
 - Repo angelegt, Demo noch nicht gezeigt
 
+## Gestaltung
+- **Richtung:** (ein Satz, z.B. «Kreidetafel-Bistro: Karte im Mittelpunkt, warm, handfest»)
+- **Schriftpaar:** (Titel / Text, z.B. «Fraunces / Source Sans 3»)
+- **Farbwelt:** 
+- **Aufbau-Idee:** (Einstieg + Reihenfolge, z.B. «Name gross auf Farbfläche, dann Karte, Fotos als Streifen»)
+- **Fotos:** (mit / ohne – Quelle, Begründung)
+
 ## Wartet auf
 - (wer muss als Nächstes etwas tun? Simon / Kunde)
 
