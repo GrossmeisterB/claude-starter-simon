@@ -28,7 +28,7 @@
 - **B2 – Telemetrie global.** Aus demselben Grund greift ein `env` in `<repo>/.claude/settings.json` nicht. → `IMPECCABLE_NO_TELEMETRY=1` + `DO_NOT_TRACK=1` in Simons globale `~/.claude/settings.json` via erweitertem `merge-settings.mjs`.
 - **B3 – CRLF.** Simon hat `core.autocrlf true`. Der Shell-Launcher `scripts/impeccable` bräche mit CRLF. → `.gitattributes` in der Vorlage erzwingt LF.
 - **B4 – `mobile-native` nicht manual-only** und schreibt Code um (Nachprüfung). → Nach Installation `disable-model-invocation: true` ergänzen.
-- **B5 – Würfel-Abruf.** Telemetrie-Opt-out unterdrückt nur den Auswahl-Ping. `GET https://impeccable.style/api/roll` (Herausforderer-Richtungen) und Kartenbilder laufen weiter. **Offener Entscheid O1 (Roland):** zulassen (Empfehlung: ja, die zufälligen Richtungen dienen direkt dem Ziel «nicht gleich»; Task 2 Schritt 6 belegt vorher, welche Daten der Abruf sendet) oder per `IMPECCABLE_API_URL=http://127.0.0.1:9` abschalten.
+- **B5 – Würfel-Abruf.** Telemetrie-Opt-out unterdrückt nur den Auswahl-Ping. `GET https://impeccable.style/api/roll` (Herausforderer-Richtungen) und Kartenbilder laufen weiter. **Entscheid O1 (Roland, vor Task 2):** zulassen oder per `IMPECCABLE_API_URL=http://127.0.0.1:9` abschalten. Knecht: Spec #6 «Telemetrie aus» spricht für abschalten. Task 2 Schritt 6 belegt vorher, welche Daten der Abruf sendet.
 
 ## Review Focus
 
@@ -90,14 +90,20 @@ Expected: u.a. `dist/index.html`, `dist/404.html`, `dist/impressum/index.html`, 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import { indexable as indexierbar } from "../src/lib/indexable.mjs";
 
 const site = JSON.parse(readFileSync(new URL("../src/content/site.json", import.meta.url), "utf8"));
 const datei = (p) => new URL(`../dist/${p}`, import.meta.url);
 const lies = (p) => readFileSync(datei(p), "utf8");
-const text = (html) => html.replace(/&amp;/g, "&").replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
+const ENT = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
+const text = (html) =>
+  html
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+    .replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? m);
+const kompakt = (s) => s.replace(/\s+/g, "");
 
 const SEITEN = ["index.html", "404.html", "impressum/index.html", "datenschutz/index.html"];
-const indexierbar = site.live === true && process.env.DEPLOY_ENV === "production";
 
 test("alle Seiten werden gebaut", () => {
   for (const p of SEITEN) assert.ok(existsSync(datei(p)), `fehlt: dist/${p}`);
@@ -119,20 +125,29 @@ test("strukturierte Daten für Google stimmen mit site.json", () => {
   const ld = JSON.parse(m[1]);
   assert.equal(ld["@type"], "Restaurant");
   assert.equal(ld.name, site.name);
+  assert.equal(ld.telephone, site.kontakt.telefon);
+  assert.equal(ld.address.streetAddress, site.kontakt.strasse);
+  assert.equal(ld.address.postalCode, site.kontakt.plz);
   const erwartet = site.oeffnungszeiten.flatMap((o) => o.schema ?? []).length;
   assert.equal(ld.openingHoursSpecification.length, erwartet);
 });
 
 test("alle Inhalte aus site.json stehen auf der Startseite", () => {
-  const html = text(lies("index.html"));
+  const html = kompakt(text(lies("index.html")));
   const fehlt = [];
   const muss = [site.name, site.kontakt.telefon, site.kontakt.strasse];
   for (const g of site.speisekarte) {
     muss.push(g.titel);
-    for (const d of g.gerichte) muss.push(d.name, d.preis);
+    for (const d of g.gerichte) muss.push(d.name);
   }
   for (const o of site.oeffnungszeiten) muss.push(o.tage, ...o.zeit.split(", "));
-  for (const s of muss) if (!html.includes(s)) fehlt.push(s);
+  for (const s of muss) if (!html.includes(kompakt(s))) fehlt.push(s);
+  for (const g of site.speisekarte)
+    for (const d of g.gerichte) {
+      const [fr, rp = "00"] = d.preis.split(".");
+      const formen = [d.preis, `${fr},${rp}`, ...(rp === "00" ? [`${fr}.–`, `${fr}.-`, `${fr}.—`] : [])];
+      if (!formen.some((f) => html.includes(f))) fehlt.push(`Preis ${d.name}: ${d.preis}`);
+    }
   assert.deepEqual(fehlt, [], "nicht auf der Seite (fest im Code statt aus site.json?)");
 });
 
@@ -154,7 +169,7 @@ Expected: genau `Gestaltung steckt nicht in site.json` FAIL, alle anderen PASS. 
 
 - [ ] **Step 4: Mutationsprobe für den noindex-Test**
 
-`DEPLOY_ENV=production node --test tests/technik.test.mjs` mit `site.live` vorübergehend `true` **ohne** neu zu bauen → noindex-Test muss FAIL. Danach `live` zurück auf `false`. Beweist, dass der Test eine falsche Sperre erkennt.
+`site.live` vorübergehend `true`, dann **ohne** neu zu bauen `DEPLOY_ENV=production node --test tests/technik.test.mjs` → noindex-Test muss FAIL (Test liest `indexable` aus `src/lib/indexable.mjs`, Bauausgabe hat noch noindex). Danach `live` zurück auf `false`. Beweist, dass der Test eine falsche Sperre erkennt.
 
 - [ ] **Step 5: Vorlage roh machen**
 
@@ -261,7 +276,7 @@ Run: `node --test claude-home/merge-settings.test.mjs` → Test 1 FAIL (`IMPECCA
 current.env ??= {};
 for (const [key, value] of Object.entries(template.env ?? {})) current.env[key] ??= value;
 ```
-Kopfkommentar anpassen: «Fügt Hooks und env aus settings.template.json …». Log-Zeile um `env: <keys>` ergänzen.
+Kopfkommentar anpassen: «Fügt Hooks und env aus settings.template.json …». Log-Zeile um `env: <keys>` ergänzen. Backup-Name mit Zeitstempel statt nur Datum, damit ein zweiter Lauf am selben Tag das erste Backup nicht überschreibt: `` `${target}.bak-${new Date().toISOString().replace(/[:.]/g, "-")}` `` (Doppelpunkte sind unter Windows in Dateinamen verboten).
 Run: Test → PASS (beide).
 
 - [ ] **Step 3: impeccable reproduzierbar holen**
@@ -378,7 +393,7 @@ Jedes vorhandene Foto ansehen und kurz beurteilen: scharf? gutes Licht? mindeste
 
 ## 3. Sperrliste aus bisherigen Kunden
 ```bash
-grep -h -A6 "^## Gestaltung" "$VAULT/02 Kunden/"*.md
+for f in "$VAULT/02 Kunden/"*.md; do echo "== $f"; awk '/^## Gestaltung/{a=1;next} /^## /{a=0} a' "$f"; done
 ```
 Daraus zwei Listen bilden: **Schriftpaare** (Titel / Text) und **Aufbau-Ideen**. Der aktuelle Kunde selbst zählt nicht. Ein Schriftpaar gilt als wiederholt, wenn Titel- **und** Textschrift gleich sind. Eine Aufbau-Idee gilt als wiederholt, wenn Einstieg **und** Reihenfolge der Hauptabschnitte gleich sind. Farben dürfen sich wiederholen.
 
@@ -400,15 +415,15 @@ impeccable baut die gewählte Richtung. Dazu:
 
 ## 7. Prüfen
 1. impeccable-Prüfung (`critique` / Detektor) auf die gebaute Seite, Befunde beheben.
-2. `/mobile-native` ausdrücklich aufrufen (die Seite wird fast nur auf dem Handy angeschaut). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
-3. Hat die Richtung Bewegung oder Animation: `/review-animations` aufrufen.
+2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
+3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
 5. `npx astro preview` und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
 - impeccable schreibt am Schluss `DESIGN.md` aus der gebauten Seite. Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/config.json`, `.impeccable/design.json` (falls vorhanden) und den Code.
 ```bash
-git add -A && git commit -m "Gestaltung: <Richtung in drei Worten>"
+git add -A && { git diff --cached --quiet || git commit -m "Gestaltung: <Richtung in drei Worten>"; }
 ```
 - Kunden-Notiz `## Gestaltung` ausfüllen (alle fünf Felder). Ohne Fotos: unter `## Wartet auf` «gute Fotos vom Kunden (optional)» eintragen.
 - Push: Vor der ersten Demo übernimmt `neuer-kunde`. Sonst Push auf `staging` (frei) und Vorschau-Link zeigen; `main` nur mit Simons Go.
@@ -424,7 +439,7 @@ Dann `package.json` um das Script `check` aus `$V/package.json` ergänzen, in `d
 ````
 
 - [ ] **Step 3: Trockenprüfung der Befehle**
-In einem Wegwerf-Klon der Vorlage aus Task 2: Block «0. Vorbereitung» und den `grep`-Befehl aus Schritt 3 gegen ein Test-Vault mit zwei Kunden-Notizen ausführen → Ausgabe enthält beide `## Gestaltung`-Blöcke. Nachrüsten-Block gegen eine Kopie der **alten** Vorlage (`git show ec21112:kunden-vorlage`, via `git archive ec21112 kunden-vorlage | tar -x -C "$T"`) ausführen, danach `npm install && npm run check` → grün.
+Testumgebung anlegen: `T=$(mktemp -d)`, `HOME=$T/home`, darin `~/.config/webwerkstatt/config.env` mit `VAULT="$HOME/Brain"`, Vault-Kopie aus `vault/` mit zwei Kunden-Notizen (aus neuem `Kunde.md`, `## Gestaltung` ausgefüllt, eine mit mehrzeiligem Bullet), `~/Developer/kunden-vorlage` = Kopie von `kunden-vorlage/` aus diesem Branch (`git init`, Commit). Dann in einem Klon davon Block «0. Vorbereitung» und den Sperrlisten-Befehl aus Schritt 3 ausführen → Ausgabe enthält beide `## Gestaltung`-Blöcke. Nachrüsten-Block gegen eine Kopie der **alten** Vorlage (`git show ec21112:kunden-vorlage`, via `git archive ec21112 kunden-vorlage | tar -x -C "$T"`) ausführen, danach `npm install && npm run check` → grün.
 
 - [ ] **Step 4: Commit + Knecht**
 ```bash
@@ -446,7 +461,7 @@ Knecht: `SKILL.md` + Spec — «Deckt der Skill alle Spec-Entscheide 3–8 und 1
 - Interview Frage 4 ergänzen: «… Gibt es **gute** Fotos (professionell oder sehr gut), Logo, Schild? (Material → `07 Anhänge/<Betrieb>/`)»
 - Schritt 8 «Vault» (Kunden-Notiz anlegen) **vor** den bisherigen Schritt 6 ziehen (neu Schritt 6, `## Status`: «Repo angelegt, Gestaltung läuft»), weil `kunden-design` die Notiz braucht.
 - Neuer Schritt 7 «Gestaltung»: «Skill `kunden-design` vollständig ausführen. Erst wenn er abgeschlossen ist (Check grün, Screenshots gezeigt, `## Gestaltung` ausgefüllt), weiter.»
-- Alter Schritt 6 «Erste Demo veröffentlichen» wird Schritt 8, Satz an Simon ergänzen: «… Die Seite hat jetzt ihre eigene Gestaltung.» Beweis = Schritt 9, Abschluss = Schritt 10; in Schritt 10 `## Status` «Demo live (eigene Gestaltung, noch Mustertexte)» und Daily-Note-Zeile.
+- Alter Schritt 6 «Erste Demo veröffentlichen» wird Schritt 8, Satz an Simon ergänzen: «… Die Seite hat jetzt ihre eigene Gestaltung.» Commit-Zeile ersetzen durch `git add -A && { git diff --cached --quiet || git commit -m "Kunde <Betrieb> eingerichtet"; }` (kunden-design hat meist schon alles committet; ein leerer Commit würde sonst abbrechen). Beweis = Schritt 9, Abschluss = Schritt 10; in Schritt 10 `## Status` «Demo live (eigene Gestaltung, noch Mustertexte)» und Daily-Note-Zeile.
 - Schritt 5 «Lokal prüfen»: `npm run build` → `npm run check`; Handy-Screenshot dort streichen (kommt in `kunden-design`).
 
 - [ ] **Step 2: CLAUDE.md Webseiten-Standard**
@@ -489,7 +504,10 @@ Simon sagt: **«Hol die neuesten Updates vom Startpaket.»** Dann:
 3. Neues Paket holen (alte Kopie wird ersetzt, eigene Daten liegen nicht dort):
    ```bash
    QUELLE="${QUELLE:-https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/heads/main.zip}"
-   cd ~ && rm -rf claude-starter-simon-update && mkdir claude-starter-simon-update && cd claude-starter-simon-update
+   cd ~
+   # Existiert der Ordner schon (Rest eines früheren Updates): Simon fragen, dann löschen.
+   [ -d claude-starter-simon-update ] && echo "Rest eines früheren Updates vorhanden"
+   mkdir claude-starter-simon-update && cd claude-starter-simon-update
    curl -sL -o paket.zip "$QUELLE"
    unzip -q paket.zip 2>/dev/null || /c/Windows/System32/tar.exe -xf paket.zip
    mv claude-starter-simon-*/ neu && rm paket.zip
@@ -511,7 +529,15 @@ Simon sagt: **«Hol die neuesten Updates vom Startpaket.»** Dann:
 - [ ] **Step 2: `updates/001-kundenseiten-individuell.md`** mit diesen Abschnitten (vollständig ausformuliert, Befehle ausführbar):
 
 1. **Für Simon** (Text, den Claude sinngemäss sagt): «Bisher hätten alle deine Kundenseiten gleich ausgesehen, nur in anderen Farben. Ab jetzt bekommt jede Seite ihre eigene Gestaltung, mit einem Gestaltungs-Werkzeug namens impeccable. Damit sich deine Kunden nicht gleichen, merkt sich dein Vault, welche Schriften und welchen Aufbau du schon verwendet hast.»
-2. **Vergleichsbasis holen:** `curl -sL -o alt.zip https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/tags/v1.zip`, entpacken nach `~/claude-starter-simon-update/alt` (gleicher Fallback wie README).
+2. **Vergleichsbasis holen** (der Stand, den Simon ursprünglich bekommen hat):
+   ```bash
+   cd ~/claude-starter-simon-update
+   BASIS="${BASIS:-https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/tags/v1.zip}"
+   curl -sL -o alt.zip "$BASIS"
+   mkdir alt-tmp && (cd alt-tmp && { unzip -q ../alt.zip 2>/dev/null || /c/Windows/System32/tar.exe -xf ../alt.zip; })
+   mv alt-tmp/claude-starter-simon-*/ alt && rm -rf alt-tmp alt.zip
+   ls alt/claude-home alt/kunden-vorlage alt/vault
+   ```
 3. **Eigene Skills:** `neuer-kunde` mit `diff -r alt/claude-home/skills/neuer-kunde ~/.claude/skills/neuer-kunde` → gleich: `cp -r neu/claude-home/skills/neuer-kunde ~/.claude/skills/`; verschieden: Regel «nie blind». `kunden-design` neu kopieren (existiert er schon und weicht ab → fragen).
 4. **CLAUDE.md:** nicht ersetzen, sondern nur den Abschnitt `## Webseiten-Standard` und die Zeile unter «Beweis vor fertig» angleichen (Text aus `neu/claude-home/CLAUDE.md`). Hat Simon dort selbst etwas geändert (`diff` des Abschnitts gegen `alt`) → zeigen, fragen. Lehrmodus-Status nicht anfassen.
 5. **Einstellungen:** `node ~/claude-starter-simon-update/neu/claude-home/merge-settings.mjs` (legt selbst ein Backup an, überschreibt keine vorhandenen Werte). Erklären: «Ich schalte ein, dass das Gestaltungs-Werkzeug keine Nutzungsdaten verschickt.»
@@ -585,7 +611,7 @@ git -C ~/Developer/claude-starter-simon archive --format=zip --prefix=claude-sta
 ```
 Mit `HOME="$SIM/home"`: SETUP 3b (Kopien + merge-settings), 5b (`config.env` mit `VAULT="$HOME/Brain"`), 5c (Vault), Phase 6 lokal (`git init`, Remote = lokales Bare-Repo `$SIM/remote/kunden-vorlage.git` statt `gh repo create`), Test-Kunde «Muster-Kafi» = Klon der alten Vorlage als `$HOME/Developer/muster-kafi` mit Branch `staging`, Kunden-Notiz aus altem `Kunde.md`. **Präparierte Eigenänderung:** in `$HOME/.claude/CLAUDE.md` «Lehrmodus (aktiv)» → «(aus)» und in `neuer-kunde/SKILL.md` eine Zeile ergänzen. `starter-version` fehlt.
 
-- [ ] **Step 2: Frischer Agent** (general-purpose, ohne Vorwissen): Auftrag nur «Du bist Claude auf Simons PC. Simon sagt: ‹Hol die neuesten Updates vom Startpaket.› Arbeitsplatz: `HOME=$SIM/home`. Paket-Quelle: `QUELLE=file://$SIM/neu.zip`, Vergleichsbasis v1: `$SIM/v1.zip` statt GitHub-Tag. Folge `updates/README.md` aus dem Paket. Simons Antworten: bei Rückfragen zu Eigenänderungen ‹meine behalten, Neues zusammenführen›; Übung am Test-Kunden: ‹nein›. Protokolliere jeden Satz, den du Simon sagst.» Emil-Installation darf echt laufen (mit `HOME` umgeleitet).
+- [ ] **Step 2: Frischer Agent** (general-purpose, ohne Vorwissen): Auftrag nur «Du bist Claude auf Simons PC. Simon sagt: ‹Hol die neuesten Updates vom Startpaket.› Arbeitsplatz: `HOME=$SIM/home`. Paket-Quelle: `QUELLE=file://$SIM/neu.zip`, Vergleichsbasis: `BASIS=file://$SIM/v1.zip`. Folge `updates/README.md` aus dem Paket. Simons Antworten: bei Rückfragen zu Eigenänderungen ‹meine behalten, Neues zusammenführen›; Übung am Test-Kunden: ‹nein›. Protokolliere jeden Satz, den du Simon sagst.» Emil-Installation darf echt laufen (mit `HOME` umgeleitet).
 
 - [ ] **Step 3: Endzustand prüfen** (selbst, nicht dem Agenten glauben):
 - `cat $SIM/home/.config/webwerkstatt/starter-version` → `1`
