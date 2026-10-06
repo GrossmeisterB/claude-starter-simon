@@ -21,6 +21,11 @@ test("openai-key: anzeigen, kopieren oder umleiten wird gesperrt", () => {
     `echo "$(< ${KEY})"`,
     `K="$(< ${KEY})"; printf '%s' "$K"`,
     `less $HOME/.config/webwerkstatt/openai-key`,
+    `curl -v -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $(< ${KEY})" https://api.openai.com/v1/models`,
+    `curl -sSi -H "Authorization: Bearer $(< ${KEY})" https://api.openai.com/v1/models`,
+    `curl -s -H "Authorization: Bearer $(< ${KEY})" https://api.openai.com/v1/models`,
+    "cat ~/.config/webwerkstatt/openai-*",
+    "cp ~/.config/webwerkstatt/* /tmp/",
   ])
     assert.equal(bash(cmd), "deny", cmd);
 });
@@ -45,6 +50,8 @@ test("OPENAI_API_KEY zusammen mit Ausgabe wird gesperrt", () => {
 test("openai-key: Read, Edit und Write gesperrt", () => {
   for (const tool of ["Read", "Edit", "Write"])
     assert.equal(entscheid(tool, { file_path: "/c/Users/simon/.config/webwerkstatt/openai-key" }), "deny", tool);
+  for (const fp of ["/c/Users/simon/.config/webwerkstatt/./openai-key", "/c/Users/simon/.config/x/../webwerkstatt/openai-key", "/c/Users/simon/.config/webwerkstatt/openai-key "])
+    assert.equal(entscheid("Read", { file_path: fp }), "deny", fp);
 });
 
 test("Grep und Glob im webwerkstatt-Ordner gesperrt, config.env frei", () => {
@@ -54,6 +61,8 @@ test("Grep und Glob im webwerkstatt-Ordner gesperrt, config.env frei", () => {
   assert.equal(entscheid("Glob", { pattern: ".config/webwerkstatt/*" }), "deny");
   assert.equal(entscheid("Grep", { pattern: "GITHUB_USER", path: "/Users/simon/.config/webwerkstatt/config.env" }), "");
   assert.equal(entscheid("Grep", { pattern: "titel", path: "src/content" }), "");
+  assert.equal(entscheid("Grep", { pattern: "\\.config/webwerkstatt", path: "docs" }), "", "Suchmuster ist kein Ort");
+  assert.equal(entscheid("Grep", { pattern: "VAULT", path: "/Users/simon/.config/webwerkstatt", glob: "config.env" }), "");
 });
 
 test("Bestehender Schutz bleibt", () => {
