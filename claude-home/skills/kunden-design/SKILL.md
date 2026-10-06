@@ -74,7 +74,7 @@ impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Materi
 
 ## 5. Richtung wählen (impeccable, neue Gestaltung)
 impeccable ausdrücklich so beauftragen. **Erste Gestaltung** (Repo hat noch keine `DESIGN.md`):
-> «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach <weitere Seiten aus 1c> und Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. <nur mit Inspiration: siehe unten>. <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
+> «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach <weitere Seiten aus 1c> und Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. Festgelegte Bedingung: alle Inhalte vollständig und echt aus site.json und src/content/seiten, auch in jedem Bildentwurf (ganze Karte, alle Zeiten, alle Themen). <nur mit Inspiration: siehe unten>. <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
 Teile in `<nur …>` und `<weitere Seiten aus 1c>` ersatzlos weglassen, wenn sie nicht zutreffen.
 
 **Umgestaltung** (es gibt schon eine `DESIGN.md`): «Redesign. Behalten: <aus dem Grilling>. Ändern: <aus dem Grilling>. Bild-Entscheid und Sperrliste wie oben (die eigene bisherige Gestaltung zählt nicht zur Sperrliste). <nur mit Inspiration: «Inspiration: <ein Satz aus der Analyse> – Prinzipien übernehmen, nichts kopieren.»> <nur ohne Schlüssel: Code-led, keine Bildentwürfe.>»
@@ -86,7 +86,7 @@ Bei einer Umgestaltung, die die bisherige Welt behält, zeigt impeccable weder P
 
 - Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
 - Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable bei einer neuen Gestaltung immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
-- **Simon wählt** die Richtung – mit Bildentwürfen direkt am Bild. Verlangt impeccable eine Freigabe per Klick auf einer Seite im Browser, öffnet Simon die Seite und klickt selbst; du gibst nie stellvertretend frei.
+- **Simon wählt** die Richtung – mit Bildentwürfen direkt am Bild. Verlangt impeccable eine Freigabe per Klick auf einer Seite im Browser, öffnet Simon die Seite und klickt selbst. Nur wenn das nicht geht, die Rückfälle nehmen, die impeccable dafür selbst beschreibt, und Simon offen sagen, was du angenommen hast.
 - Sagt Simon während der Auswahl «mutiger», «zu brav» oder «sicherer», ist das impeccables Neu-Würfeln mit Stil-Regler: `--register bolder` bzw. `--register safer` (impeccable druckt, wie).
 - **Option für den Kunden:** Will Simon dem Kunden Richtungen zeigen, die Entscheidungsseite per Playwright abfotografieren und nach `$VAULT/07 Anhänge/<Betrieb>/Richtungen/` speichern. Mail an den Kunden nur als Entwurf.
 
@@ -95,15 +95,15 @@ impeccable baut die gewählte Richtung. Dazu:
 - Browser-Farbe setzen: in `Base.astro` `<meta name="theme-color" …>` passend zur Gestaltung (hell und dunkel, falls die Seite einen Dunkel-Modus hat).
 - Schriften so wählen, dass Zahlen gut lesbar sind: keine durchgestrichene Null in Preisen, Zeiten und Telefonnummer (wirkt wie «Ø»). Notfalls die Schrift-Option für die normale Null einschalten oder eine andere Textschrift nehmen.
 - Schriften lokal einbinden (z.B. `@fontsource/<schrift>` per npm), nicht von Google Fonts laden – das ist für den Datenschutz einfacher.
-- **Alle Inhalte zeigen:** Ein Bildentwurf darf die Karte kürzen (z.B. vier statt sechs Weine). Die gebaute Seite zeigt trotzdem alles aus `site.json` und `src/content/seiten/`. Diese Regel geht impeccables Abgleich mit dem Entwurf vor; eine dadurch niedrigere Übereinstimmung ist in Ordnung und wird Simon so erklärt.
-- **Computer-Ansicht eigens gestalten:** Bildentwürfe sind Handy-Hochformat. Ab etwa 1024 px Breite braucht die Seite ein eigenes Layout (z.B. Spalten, begrenzte Zeilenlänge), nicht die vergrösserte Handy-Spalte.
+- **Alle Inhalte zeigen:** Die gebaute Seite zeigt alles aus `site.json` und `src/content/seiten/`. Damit der Bildentwurf dazu passt, gehört «vollständige echte Inhalte: alle Positionen der Karte, alle Zeiten, alle Themen» schon in den Auftrag an impeccable (als festgelegte Bedingung) und in jeden Entwurf. Zeigt ein Entwurf trotzdem weniger, als die Seite braucht: Das nicht selbst entscheiden. Simon beim Freigeben des Entwurfs ausdrücklich fragen («Im Bild stehen vier Weine, auf der Seite müssen alle sechs stehen – ist das für dich in Ordnung?») und seine Antwort wörtlich so verwenden, wie impeccable es für eine Abweichung vom Entwurf verlangt (nur der Nutzer darf die Verbindlichkeit des Entwurfs lockern, in eigenen Worten).
+- **Computer-Ansicht:** Der erste Bildschirm folgt dem Entwurf (impeccable prüft das). Darunter darf die Seite am Computer nicht die vergrösserte Handy-Spalte sein: begrenzte Zeilenlänge, bei Bedarf Spalten – das verlangt impeccables Schritt für andere Bildschirmgrössen ohnehin.
 - **Favicon** (`public/favicon.svg`) zur Gestaltung passend ersetzen; das der Vorlage ist ein Platzhalter.
-- Nach jedem grösseren Schritt: `npm run check`. Rot heisst: Technik oder Inhalt kaputt → zuerst reparieren.
+- `npm run check` nach jeder abgeschlossenen Bauphase. impeccable baut in Phasen (zuerst der erste Bildschirm, dann die Abschnitte); solange die Abschnitte noch fehlen, darf der Inhalts-Teil rot sein. Spätestens vor der Schlussprüfung muss alles grün sein; Technik-Teile (noindex, strukturierte Daten, Rechtslinks) sind nie rot.
 - **Ohne Schlüssel** (direkt in Code gebaut): nach dem Bau einen `bolder`-Durchgang machen («mutiger»), damit die Seite nicht brav bleibt.
 - **Mehr Mut auf Zuruf** nach dem Bau: Sagt Simon «zu brav» oder «mutiger» → impeccable `bolder`; sagt er «geh über die Grenzen» → `overdrive`.
 
 ## 7. Prüfen
-1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben. Höchstens **drei** Prüfrunden; was danach offen ist, Simon als Liste nennen und in der Kunden-Notiz unter `## Wartet auf` festhalten.
+1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben. Höchstens **zwei** Prüfrunden (so begrenzt es impeccable selbst); was danach offen ist, Simon als Liste nennen und in der Kunden-Notiz unter `## Wartet auf` festhalten.
 2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
 3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
@@ -116,7 +116,7 @@ Treffer → umschreiben. Bilder: Prüfsummen vergleichen, dann fällt auch eine 
 source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; cd "$REPO" && comm -12 <(cksum "$VAULT/07 Anhänge/<Betrieb>/Inspiration/"* | cut -d' ' -f1,2 | sort) <(find public src -type f -exec cksum {} + | cut -d' ' -f1,2 | sort); echo "Zeilen oben = Inspirations-Bild im Projekt"
 ```
 Ergebnis Simon in einem Satz nennen.
-5. Computer-Ansicht prüfen: Bei 1280 px darf die Seite nicht wie die gestreckte Handy-Ansicht aussehen (eine einzige breite Spalte mit Riesenschrift) – sonst zurück zu «6. Bauen».
+5. Computer-Ansicht prüfen: Bei 1280 px darf die Seite nicht wie die gestreckte Handy-Ansicht aussehen (eine einzige breite Spalte mit Riesenschrift) – sonst unterhalb des ersten Bildschirms nachbessern. Meldet impeccables Prüfung nach mehreren Versuchen einen eigenen Weg, diesen nehmen statt weiter zu probieren.
 6. Zuerst `npx astro preview stop` (eine Vorschau läuft im Hintergrund weiter und zeigt sonst evtl. ein anderes Kundenprojekt), dann `npx astro preview`, Seitentitel prüfen (muss der Name des Betriebs sein) und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
