@@ -5,7 +5,7 @@ description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impecc
 
 # Kunden-Design
 
-Lehrmodus beachten. Wird der Skill für eine **Umgestaltung** aufgerufen (nicht aus `neuer-kunde`), gilt Simons Regel «Grilling vor grösseren Vorhaben»: zuerst klären, was an der bisherigen Gestaltung nicht passt. Bei der **ersten** Gestaltung eines Kunden (auch wenn direkt aufgerufen) reicht das Kurz-Interview aus `neuer-kunde`, kein eigenes Grilling. Zusätzlich hier: **vor jedem Schritt in ein bis zwei Sätzen ohne Fachwörter sagen, was jetzt passiert und warum.**
+Lehrmodus beachten. Simons Regel «Grilling vor grösseren Vorhaben» gilt: Wurde für diesen Kunden in dieser Sitzung schon gegrillt (z.B. vor `neuer-kunde`), nicht nochmals. Bei einer **Umgestaltung** zuerst klären, was an der bisherigen Gestaltung bleiben soll und was nicht passt. Zusätzlich hier: **vor jedem Schritt in ein bis zwei Sätzen ohne Fachwörter sagen, was jetzt passiert und warum.**
 
 ## Grundsätze
 - Jede Seite bekommt eine eigene Gestaltung. Die Vorlage ist ein roher Platzhalter und kein Vorbild.
@@ -46,7 +46,7 @@ Jedes vorhandene Foto ansehen und kurz beurteilen: scharf? gutes Licht? mindeste
 
 ## 3. Sperrliste aus bisherigen Kunden
 ```bash
-source ~/.config/webwerkstatt/config.env; for f in "$VAULT/02 Kunden/"*.md; do echo "== $f"; awk '/^## Gestaltung/{a=1;next} /^## /{a=0} a' "$f" | grep -v -- ':\*\* (' ; done
+source ~/.config/webwerkstatt/config.env; for f in "$VAULT/02 Kunden/"*.md; do echo "== $f"; awk '/^## Gestaltung/{a=1;next} /^## /{a=0} a' "$f" | grep -vF ':** (' ; done
 ```
 Felder, die noch in Klammern stehen («(… z.B. …)»), sind leere Vorlagen-Beispiele und zählen nicht – der Befehl filtert sie. Daraus zwei Listen bilden: **Schriftpaare** (Titel / Text) und **Aufbau-Ideen**. Der aktuelle Kunde selbst zählt nicht. Ein Schriftpaar gilt als wiederholt, wenn Titel- **und** Textschrift gleich sind. Eine Aufbau-Idee gilt als wiederholt, wenn der Einstieg (was man ohne Scrollen sieht: z.B. «Vollbild-Foto mit Name», «Name gross auf Farbfläche», «Karte sofort sichtbar») **und** die Reihenfolge der Hauptabschnitte gleich sind. Hauptabschnitte sind Angebot/Karte, Öffnungszeiten, Kontakt/Anfahrt, Über uns, Fotos – Kopf, Fuss, Impressum und Datenschutz zählen nicht. Anderer Einstieg **oder** andere Reihenfolge = erlaubt. Farben dürfen sich wiederholen.
 
@@ -54,8 +54,10 @@ Felder, die noch in Klammern stehen («(… z.B. …)»), sind leere Vorlagen-Be
 impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Material vorbefüllen, Simon nur bestätigen oder ergänzen lassen. Ergebnis: `PRODUCT.md` im Repo.
 
 ## 5. Richtung wählen (impeccable, neue Gestaltung)
-impeccable ausdrücklich so beauftragen:
+impeccable ausdrücklich so beauftragen. **Erste Gestaltung** (Repo hat noch keine `DESIGN.md`):
 > «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. Code-led, keine Bildentwürfe.»
+
+**Umgestaltung** (es gibt schon eine `DESIGN.md`): «Redesign. Behalten: <aus dem Grilling>. Ändern: <aus dem Grilling>. Bild-Entscheid und Sperrliste wie oben (die eigene bisherige Gestaltung zählt nicht zur Sperrliste). Code-led, keine Bildentwürfe.»
 
 - Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
 - Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
