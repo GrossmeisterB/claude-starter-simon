@@ -11,8 +11,8 @@ Sinngemäss sagen: «Bisher hätten alle deine Kundenseiten gleich ausgesehen, n
 Erklären: «Ich hole zum Vergleich die Version, die du beim Einrichten bekommen hast. So sehe ich, ob du seither selbst etwas angepasst hast, und überschreibe nichts davon.»
 ```bash
 BASIS="${BASIS:-https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/tags/v1.zip}"
-cd ~/claude-starter-simon-update && [ -d alt ] && echo "schon da" || { curl -sL -o alt.zip "$BASIS" && mkdir alt-tmp \
-  && (cd alt-tmp && { unzip -q ../alt.zip 2>/dev/null || /c/Windows/System32/tar.exe -xf ../alt.zip; }) \
+cd ~/claude-starter-simon-update && [ -d alt ] && echo "schon da" || { curl -sL -o alt.zip "$BASIS" && rm -rf alt-tmp && mkdir alt-tmp \
+  && (cd alt-tmp && { /c/Windows/System32/tar.exe -xf ../alt.zip 2>/dev/null || tar -xf ../alt.zip; }) \
   && mv alt-tmp/claude-starter-simon-*/ alt && rm -rf alt-tmp alt.zip; }; ls alt
 ```
 
@@ -41,7 +41,7 @@ Die Datei **nicht** ersetzen. Nur zwei Stellen angleichen:
 cd ~/claude-starter-simon-update && for f in alt/claude-home/CLAUDE.md ~/.claude/CLAUDE.md neu/claude-home/CLAUDE.md; do echo "=== $f"; awk '/^## Webseiten-Standard/{a=1} /^## Second Brain/{a=0} a' "$f"; grep -n "Bei Webseiten heisst Nachweis" "$f"; done
 ```
 - Abschnitt `## Webseiten-Standard` bei Simon gleich wie in `alt` → mit dem Edit-Werkzeug durch die Fassung aus `neu` ersetzen. Gleich wie `neu` → nichts tun. Sonst → zeigen, fragen, zusammenführen.
-- Zeile «Bei Webseiten heisst Nachweis: Build läuft durch **und** …» → «`npm run check` ist grün **und** …» (Rest der Zeile wie bei Simon).
+- Zeile «Bei Webseiten heisst Nachweis: …»: Ist sie bei Simon gleich wie in `alt` → «Build läuft durch» durch «`npm run check` ist grün» ersetzen. Hat Simon sie umformuliert → zeigen, fragen.
 - Lehrmodus-Status `(aktiv)`/`(aus)` und alle anderen Abschnitte bleiben, wie sie bei Simon sind.
 
 ## 4. Einstellungen
@@ -69,7 +69,7 @@ Erklären: «Jede Kunden-Notiz bekommt einen Abschnitt ‹Gestaltung›. Dort st
 source ~/.config/webwerkstatt/config.env; cd ~/claude-starter-simon-update && diff alt/vault/Templates/Kunde.md "$VAULT/Templates/Kunde.md" && echo "Vorlage unverändert"; grep -L "^## Gestaltung" "$VAULT/02 Kunden/"*.md 2>/dev/null
 ```
 - `Templates/Kunde.md` unverändert → `source ~/.config/webwerkstatt/config.env; cp ~/claude-starter-simon-update/neu/vault/Templates/Kunde.md "$VAULT/Templates/Kunde.md"`. Hat Simon sie angepasst → nur den Abschnitt `## Gestaltung` (aus `neu`) nach `## Status` einfügen. Enthält sie ihn schon → nichts tun.
-- Die von `grep -L` gelisteten Kunden-Notizen (ohne Abschnitt): Simon fragen, dann den leeren Abschnitt `## Gestaltung` aus der neuen Vorlage nach `## Status` einfügen.
+- Die von `grep -L` gelisteten Kunden-Notizen (ohne Abschnitt): Simon fragen, dann den Abschnitt `## Gestaltung` mit seinen fünf noch leeren Feldern (Richtung, Schriftpaar, Farbwelt, Aufbau-Idee, Fotos) aus der neuen Vorlage nach `## Status` einfügen.
 
 ## 7. Kunden-Vorlage auf GitHub
 
@@ -97,7 +97,7 @@ Erklären: «Ich starte das Gestaltungs-Werkzeug einmal zum Test. Beim ersten Ma
 ```bash
 cd ~/Developer/kunden-vorlage && .claude/skills/impeccable/scripts/impeccable engine-probe
 ```
-Erwartet: `impeccable-engine 0.1.11`.
+Erwartet: `impeccable-engine 0.1.11`. Das Gestaltungs-Werkzeug ist bewusst auf einen geprüften Stand festgelegt. Es wird nicht selbst aktualisiert, sondern nur über ein späteres Update, wenn Roland eine neue Version geprüft hat.
 
 ## 9. Übung am Test-Kunden (Muster-Kafi)
 

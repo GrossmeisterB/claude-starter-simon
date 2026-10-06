@@ -11,10 +11,10 @@ Simon sagt: **«Hol die neuesten Updates vom Startpaket.»** Dann gehst du so vo
    ```bash
    QUELLE="${QUELLE:-https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/heads/main.zip}"
    cd ~ && mkdir claude-starter-simon-update && cd claude-starter-simon-update && curl -sL -o paket.zip "$QUELLE" \
-     && { unzip -q paket.zip 2>/dev/null || /c/Windows/System32/tar.exe -xf paket.zip; } \
+     && { /c/Windows/System32/tar.exe -xf paket.zip 2>/dev/null || tar -xf paket.zip; } \
      && mv claude-starter-simon-*/ neu && rm paket.zip && ls neu/updates
    ```
-   (Das `tar` von Git Bash kann kein ZIP entpacken, das Windows-eigene `tar.exe` schon.)
+   (Zuerst das Windows-eigene `tar.exe` – damit wurde das Paket auch beim Einrichten entpackt. `unzip` scheitert an Ordnernamen mit Umlaut wie `07 Anhänge`, das `tar` von Git Bash kann kein ZIP.)
 4. Alle Dateien `neu/updates/NNN-*.md`, deren Nummer **grösser** ist als der Stand, der Reihe nach lesen und ausführen. Vor jedem Update Simon in zwei Sätzen sagen, was es bringt (Abschnitt «Für Simon» darin).
 5. Nach **jedem** erfolgreich abgeschlossenen Update sofort den Stand setzen, ohne führende Nullen (Beispiel für Update 001):
    ```bash
