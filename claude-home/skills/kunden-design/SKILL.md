@@ -29,6 +29,10 @@ source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$R
 - Kunden-Notiz `$VAULT/02 Kunden/<Betrieb>.md` muss existieren.
 - Fehlt `$IMP` oder der Technik-Test: Das Repo stammt aus einer älteren Vorlage → zuerst «Nachrüsten» (unten).
 - **impeccable laden:** `~/Developer/<slug>/.claude/skills/impeccable/SKILL.md` mit dem Read-Werkzeug lesen und für die Schritte 4–8 befolgen. Sein Skill-Ordner ist dieser Ordner; den Launcher immer mit vollem Pfad und Präambel aufrufen: `…; cd "$REPO" && "$IMP/scripts/impeccable" <befehl>`. Simon kurz sagen: «impeccable ist ein Gestaltungs-Werkzeug, das in jedem Kundenprojekt mitkommt. Beim ersten Mal lädt es ein kleines Programm herunter.»
+- Als ersten impeccable-Befehl einmal den Projekt-Kontext laden (verlangt impeccable selbst):
+```bash
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; cd "$REPO" && "$IMP/scripts/impeccable" context
+```
 
 ## 1. Material sichten
 Alles zusammentragen, was es vom Betrieb gibt: `$VAULT/07 Anhänge/<Betrieb>/`, Logo, Schild, alte Webseite, Google-Eintrag, Speisekarte. Kurz auflisten, was da ist.
@@ -44,7 +48,7 @@ Jedes vorhandene Foto ansehen und kurz beurteilen: scharf? gutes Licht? mindeste
 ```bash
 source ~/.config/webwerkstatt/config.env; for f in "$VAULT/02 Kunden/"*.md; do echo "== $f"; awk '/^## Gestaltung/{a=1;next} /^## /{a=0} a' "$f"; done
 ```
-Daraus zwei Listen bilden: **Schriftpaare** (Titel / Text) und **Aufbau-Ideen**. Der aktuelle Kunde selbst zählt nicht. Ein Schriftpaar gilt als wiederholt, wenn Titel- **und** Textschrift gleich sind. Eine Aufbau-Idee gilt als wiederholt, wenn Einstieg **und** Reihenfolge der Hauptabschnitte gleich sind. Farben dürfen sich wiederholen.
+Daraus zwei Listen bilden: **Schriftpaare** (Titel / Text) und **Aufbau-Ideen**. Der aktuelle Kunde selbst zählt nicht. Ein Schriftpaar gilt als wiederholt, wenn Titel- **und** Textschrift gleich sind. Eine Aufbau-Idee gilt als wiederholt, wenn der Einstieg (was man ohne Scrollen sieht: z.B. «Vollbild-Foto mit Name», «Name gross auf Farbfläche», «Karte sofort sichtbar») **und** die Reihenfolge der Hauptabschnitte gleich sind. Hauptabschnitte sind Angebot/Karte, Öffnungszeiten, Kontakt/Anfahrt, Über uns, Fotos – Kopf, Fuss, Impressum und Datenschutz zählen nicht. Anderer Einstieg **oder** andere Reihenfolge = erlaubt. Farben dürfen sich wiederholen.
 
 ## 4. Produkt-Steckbrief (impeccable `init`)
 impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Material vorbefüllen, Simon nur bestätigen oder ergänzen lassen. Ergebnis: `PRODUCT.md` im Repo.
@@ -53,7 +57,9 @@ impeccable `init` ausführen. Antworten aus `site.json`, Kunden-Notiz und Materi
 impeccable ausdrücklich so beauftragen:
 > «Redesign. Die bestehende Gestaltung ist ein roher Platzhalter ohne Autorität – nichts davon übernehmen. Fläche: Startseite (Modus Persuade), danach Impressum/Datenschutz/404 im selben Stil. Bild-Entscheid: <mit Fotos: Liste | ohne Fotos>. Diese Schriftpaare und Aufbau-Ideen sind vergeben und dürfen nicht vorkommen: <Sperrliste>. Code-led, keine Bildentwürfe.»
 
-- **Simon wählt** die Richtung. Liegt eine Richtung auf der Sperrliste, sie streichen und das sagen.
+- Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
+- Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind.
+- **Simon wählt** die Richtung.
 - **Option für den Kunden:** Will Simon dem Kunden Richtungen zeigen, die Entscheidungsseite per Playwright abfotografieren und nach `$VAULT/07 Anhänge/<Betrieb>/Richtungen/` speichern. Mail an den Kunden nur als Entwurf.
 
 ## 6. Bauen
@@ -70,7 +76,7 @@ impeccable baut die gewählte Richtung. Dazu:
 5. `npx astro preview` und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
-- impeccable schreibt am Schluss `DESIGN.md` aus der gebauten Seite. Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/config.json`, `.impeccable/design.json` (falls vorhanden) und den Code.
+- impeccable schreibt am Schluss `DESIGN.md` und `.impeccable/design.json` aus der gebauten Seite. **Beide müssen existieren**, sonst ist die Gestaltung nicht fertig (und ohne `DESIGN.md` veröffentlicht GitHub die Seite nicht). Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/config.json`, `.impeccable/design.json` und den Code.
 ```bash
 cd ~/Developer/<slug> && git add -A && { git diff --cached --quiet || git commit -m "Gestaltung: <Richtung in drei Worten>"; }
 ```
