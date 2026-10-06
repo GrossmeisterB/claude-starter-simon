@@ -19,7 +19,8 @@ Fast alles steht in **einer** Datei: `src/content/site.json`
 - Öffnungszeiten → `oeffnungszeiten`
 - Speisekarte → `speisekarte`
 - Ferien / Sonderhinweis → `hinweis` (leer lassen = kein Banner)
-- Farben → `farben`
+
+Das Aussehen (Farben, Schriften, Aufbau) steht nicht in `site.json`, sondern in `DESIGN.md` und im Code (`src/layouts/`, `src/pages/`).
 
 ## Veröffentlichen
 

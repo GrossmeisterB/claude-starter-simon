@@ -6,12 +6,6 @@
   "slogan": "Ehrliche Küche aus der Region – seit 1987.",
   "beschreibung": "Bei uns kommt auf den Teller, was in der Region wächst. Mittags ein schnelles Menü, abends Zeit für Gäste und Gespräche.",
   "kueche": ["Schweizer Küche", "Saisonal"],
-  "farben": {
-    "primaer": "#7a2e1d",
-    "akzent": "#d9a441",
-    "hintergrund": "#fbf7f2",
-    "text": "#2a211c"
-  },
   "kontakt": {
     "telefon": "+41 33 123 45 67",
     "email": "info@restaurant-muster.ch",
