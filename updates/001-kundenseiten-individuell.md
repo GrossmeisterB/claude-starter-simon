@@ -4,7 +4,7 @@
 
 ## Für Simon
 
-Sinngemäss sagen: «Bisher hätten alle deine Kundenseiten gleich ausgesehen, nur in anderen Farben. Ab jetzt bekommt jede Seite ihre eigene Gestaltung, mit einem Gestaltungs-Werkzeug namens impeccable. Damit sich deine Kunden nicht gleichen, merkt sich dein Vault, welche Schriften und welchen Aufbau du schon verwendet hast. Fotos kommen nur auf die Seite, wenn sie wirklich gut sind.»
+Sinngemäss sagen: «Bisher hätten alle deine Kundenseiten gleich ausgesehen, nur in anderen Farben. Ab jetzt bekommt jede Seite ihre eigene Gestaltung, mit einem Gestaltungs-Werkzeug namens impeccable. Damit sich deine Kunden nicht gleichen, merkt sich dein Vault, welche Schriften und welchen Aufbau du schon verwendet hast. Fotos kommen nur auf die Seite, wenn sie wirklich gut sind. Neu kannst du mir Seiten oder Bilder zeigen, die dir gefallen, und ich nehme die Ideen daraus auf, ohne etwas zu kopieren. Eine Seite darf auch mehrere Unterseiten haben, zum Beispiel für Bankett oder Events.»
 
 ## 1. Vergleichsbasis holen
 
@@ -32,6 +32,24 @@ cd ~/claude-starter-simon-update && if [ -d ~/.claude/skills/kunden-design ]; th
 ```
 Weicht ein vorhandenes `kunden-design` ab → zeigen, fragen.
 
+`gastro-texte` (schreibt neu auch Zusatzthemen wie Bankett oder Events) – gleich wie `neuer-kunde`:
+```bash
+cd ~/claude-starter-simon-update && diff -r alt/claude-home/skills/gastro-texte ~/.claude/skills/gastro-texte && echo "gastro-texte: unverändert"
+```
+- **Unverändert** → `cd ~/claude-starter-simon-update && cp -r neu/claude-home/skills/gastro-texte ~/.claude/skills/`
+- **Stimmt schon mit `neu` überein** → nichts tun.
+- **Sonst** → zeigen, fragen, zusammenführen wie bei `neuer-kunde`. Der neue Abschnitt «Zusatzthemen» muss danach drin sein.
+
+## 2b. Schutz für Schlüssel
+
+Erklären: «Ein kleines Schutzprogramm passt auf, dass ich geheime Schlüssel nie anzeige. Es lernt jetzt einen weiteren Schlüssel kennen (für Bildentwürfe, siehe weiter unten).»
+```bash
+cd ~/claude-starter-simon-update && diff alt/claude-home/hooks/block-sensitive.mjs ~/.claude/hooks/block-sensitive.mjs && echo "Schutz: unverändert"
+```
+- **Unverändert** → `cd ~/claude-starter-simon-update && cp neu/claude-home/hooks/block-sensitive.mjs ~/.claude/hooks/`
+- **Stimmt schon mit `neu` überein** (`diff neu/claude-home/hooks/block-sensitive.mjs ~/.claude/hooks/block-sensitive.mjs` leer) → nichts tun.
+- **Sonst** → zeigen, fragen. Nie den Schutz abschwächen; im Zweifel die neue Fassung nehmen und Simons Ergänzung wieder einbauen.
+
 ## 3. Globale Regeln (`~/.claude/CLAUDE.md`)
 
 Erklären: «In meinen Grundregeln steht, wie wir Webseiten bauen. Dort kommt dazu, dass jede Seite eine eigene Gestaltung bekommt. Den Rest deiner Regeln fasse ich nicht an.»
@@ -46,7 +64,7 @@ cd ~/claude-starter-simon-update && for f in alt/claude-home/CLAUDE.md ~/.claude
 
 ## 4. Einstellungen
 
-Erklären: «Ich stelle ein, dass das Gestaltungs-Werkzeug keine Nutzungsdaten verschickt. Deine übrigen Einstellungen bleiben, vorher lege ich eine Sicherungskopie an.»
+Erklären: «Ich stelle ein, dass das Gestaltungs-Werkzeug keine Nutzungsdaten verschickt, und dass das Schutzprogramm auch beim Durchsuchen von Ordnern aufpasst. Deine übrigen Einstellungen bleiben, vorher lege ich eine Sicherungskopie an.»
 ```bash
 node ~/claude-starter-simon-update/neu/claude-home/merge-settings.mjs
 ```
@@ -62,14 +80,21 @@ node -e 'const fs=require("fs"),f=process.argv[1];let s=fs.readFileSync(f,"utf8"
 ```
 In der Ausgabe muss `disable-model-invocation: true` stehen.
 
-## 6. Vault: Kunden-Notizen
+## 6. Vault: Kunden-Notizen und Anleitung
 
-Erklären: «Jede Kunden-Notiz bekommt einen Abschnitt ‹Gestaltung›. Dort steht später, welche Schriften und welchen Aufbau die Seite hat – so wiederholen wir nichts.»
+Erklären: «Jede Kunden-Notiz bekommt zwei Abschnitte: ‹Gestaltung› (welche Schriften und welchen Aufbau die Seite hat – so wiederholen wir nichts) und ‹Inspiration› (was dir oder dem Kunden gefällt). Dazu kommt eine Anleitung, wie du mit mir gestaltest.»
 ```bash
-source ~/.config/webwerkstatt/config.env; cd ~/claude-starter-simon-update && diff alt/vault/Templates/Kunde.md "$VAULT/Templates/Kunde.md" && echo "Vorlage unverändert"; grep -L "^## Gestaltung" "$VAULT/02 Kunden/"*.md 2>/dev/null
+source ~/.config/webwerkstatt/config.env; cd ~/claude-starter-simon-update && diff alt/vault/Templates/Kunde.md "$VAULT/Templates/Kunde.md" && echo "Vorlage unverändert"; echo "ohne Gestaltung:"; grep -L "^## Gestaltung" "$VAULT/02 Kunden/"*.md 2>/dev/null; echo "ohne Inspiration:"; grep -L "^## Inspiration" "$VAULT/02 Kunden/"*.md 2>/dev/null
 ```
-- `Templates/Kunde.md` unverändert → `source ~/.config/webwerkstatt/config.env; cp ~/claude-starter-simon-update/neu/vault/Templates/Kunde.md "$VAULT/Templates/Kunde.md"`. Hat Simon sie angepasst → nur den Abschnitt `## Gestaltung` (aus `neu`) nach `## Status` einfügen. Enthält sie ihn schon → nichts tun.
-- Die von `grep -L` gelisteten Kunden-Notizen (ohne Abschnitt): Simon fragen, dann den Abschnitt `## Gestaltung` mit seinen fünf noch leeren Feldern (Richtung, Schriftpaar, Farbwelt, Aufbau-Idee, Fotos) aus der neuen Vorlage nach `## Status` einfügen.
+- `Templates/Kunde.md` unverändert → `source ~/.config/webwerkstatt/config.env; cp ~/claude-starter-simon-update/neu/vault/Templates/Kunde.md "$VAULT/Templates/Kunde.md"`. Hat Simon sie angepasst → die Abschnitte `## Gestaltung` und `## Inspiration` (aus `neu`, in dieser Reihenfolge) nach `## Status` einfügen, soweit sie fehlen. Enthält sie beide schon → nichts tun.
+- Kunden-Notizen ohne `## Gestaltung`: Simon fragen, dann den Abschnitt mit seinen fünf noch leeren Feldern (Richtung, Schriftpaar, Farbwelt, Aufbau-Idee, Fotos) aus der neuen Vorlage nach `## Status` einfügen.
+- Kunden-Notizen ohne `## Inspiration`: Simon fragen, dann den Abschnitt mit seinen drei leeren Feldern (Quellen, Was gefällt, Modus) aus der neuen Vorlage nach `## Gestaltung` einfügen.
+
+Anleitung und Inspirations-Sammlung anlegen (nur wenn noch nicht da, nie überschreiben):
+```bash
+source ~/.config/webwerkstatt/config.env; cd ~/claude-starter-simon-update && for n in "Gestaltung mit Claude" "Inspiration"; do f="$VAULT/04 Ressourcen/$n.md"; if [ -f "$f" ]; then echo "$n: schon da"; else sed "s/{{HEUTE}}/$(date +%F)/" "neu/vault/04 Ressourcen/$n.md" > "$f" && echo "$n: angelegt"; fi; done
+```
+Simon sagen: «In `04 Ressourcen/Gestaltung mit Claude.md` steht in einfachen Worten, wie du Inspiration sammelst und mehr Mut verlangst – lies sie bei Gelegenheit.»
 
 ## 7. Kunden-Vorlage auf GitHub
 
@@ -85,7 +110,7 @@ cd ~/Developer/kunden-vorlage && git status --short && git log --oneline | head 
 ```bash
 cd ~/Developer/kunden-vorlage && git ls-files -z | xargs -0 rm -f && cp -R ~/claude-starter-simon-update/neu/kunden-vorlage/. . && npm install && npm run check
 ```
-`npm run check` muss grün sein («pass 6, fail 0»). Dann committen:
+`npm run check` muss grün sein («pass 8, fail 0»). Dann committen:
 ```bash
 cd ~/Developer/kunden-vorlage && git add -A && { git diff --cached --quiet || git commit -m "Vorlage: eigene Gestaltung pro Kunde (Update 001)"; } && git ls-files --eol .claude/skills/impeccable/scripts/impeccable
 ```
@@ -99,7 +124,33 @@ cd ~/Developer/kunden-vorlage && .claude/skills/impeccable/scripts/impeccable en
 ```
 Erwartet: `impeccable-engine 0.1.11`. Das Gestaltungs-Werkzeug ist bewusst auf einen geprüften Stand festgelegt. Es wird nicht selbst aktualisiert, sondern nur über ein späteres Update, wenn Roland eine neue Version geprüft hat.
 
-## 9. Übung am Test-Kunden (Muster-Kafi)
+## 9. Bildentwürfe einrichten (freiwillig)
+
+Erklären: «Wenn du willst, kann ich dir jede Gestaltungs-Richtung zuerst als Bild der fertigen Seite zeigen, bevor ich sie baue. Dafür braucht es ein Konto bei OpenAI (der Firma hinter ChatGPT) mit einem Schlüssel. Jedes Bild kostet ein paar Rappen, du legst ein Monatslimit fest. Ohne das baue ich direkt, das ist gratis und funktioniert auch gut. Willst du es jetzt einrichten, später, oder gar nicht?»
+- **Später / gar nicht** → überspringen, in der Prüfliste «Bildentwürfe: nein» bzw. «später» eintragen. Nachholen: «richte die Bildentwürfe ein» → diesen Schritt ausführen.
+- **Jetzt** → Simon klickt selbst. **Ein Schritt pro Nachricht**, erst nach seinem «ok» der nächste:
+  1. platform.openai.com öffnen, mit eigenem Konto anmelden oder registrieren.
+  2. Oben links ein neues Projekt anlegen, Name «Webwerkstatt».
+  3. In den Einstellungen des Projekts unter «Limits» ein Monatsbudget setzen (z.B. 10 Dollar) und eine Warnung bei 5 Dollar.
+  4. Unter «Billing» eine Zahlungsart hinterlegen und ein kleines Guthaben laden (z.B. 5 Dollar).
+  5. Im Projekt unter «API keys» → «Create new secret key»: Name «claude-bilder», Berechtigung **Restricted**, dort nur **Images** auf **Request** stellen, alles andere auf None. Erstellen und den Schlüssel kopieren (er wird nur einmal angezeigt). **Nicht** in den Chat einfügen.
+  6. Datei anlegen und im Editor öffnen:
+     ```bash
+     mkdir -p ~/.config/webwerkstatt && touch ~/.config/webwerkstatt/openai-key
+     ```
+     ```bash
+     notepad "$(cygpath -w ~/.config/webwerkstatt/openai-key)" &
+     ```
+     Simon: «Schlüssel einfügen (Strg+V), speichern (Strg+S), Notepad schliessen – dann ‹ok› schreiben.» Du liest die Datei **nie**.
+  7. Länge prüfen: `wc -c < ~/.config/webwerkstatt/openai-key` (ein Schlüssel hat weit über 100 Zeichen; 0 = nicht gespeichert).
+  8. Probeaufruf, gibt nur eine Zahl aus und kostet nichts:
+     ```bash
+     curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $(< ~/.config/webwerkstatt/openai-key)" https://api.openai.com/v1/models
+     ```
+     `403` = Schlüssel gültig und richtig auf Bilder beschränkt (so soll es sein). `401` = Schlüssel falsch kopiert → Schritt 6 wiederholen. `200` = Schlüssel gültig, aber nicht beschränkt → in Schritt 5 einen eingeschränkten Schlüssel erstellen, den alten löschen.
+- Meldet später der erste Bildentwurf «organization must be verified»: Simon erklären, dass OpenAI für Bilder manchmal einen Ausweis-Check verlangt (unter «Settings → Organization → Verify», mit Ausweis und Selfie). Das kann ein paar Tage dauern; bis dahin baue ich direkt in Code.
+
+## 10. Übung am Test-Kunden (Muster-Kafi)
 
 Simon fragen, ob jetzt geübt wird (dauert eine Weile). Nein → überspringen, später mit «gestalte die Seite von Muster-Kafi» nachholen.
 Ja:
@@ -108,16 +159,19 @@ source ~/.config/webwerkstatt/config.env; grep -H "^repo:" "$VAULT/02 Kunden/"*.
 ```
 Im Repo des Test-Kunden auf `staging` wechseln (`cd ~/Developer/<slug> && git switch staging`) und den Skill `kunden-design` ausführen – er beginnt mit «Nachrüsten». Danach Push auf `staging` (frei) und Simon den Vorschau-Link auf dem Handy öffnen lassen. `main` nur mit Simons Go.
 
-## 10. Abschluss
+## 11. Abschluss
 
 Stand setzen (`printf '%s' 1 > ~/.config/webwerkstatt/starter-version`). Dann diese Prüfliste ausfüllen und **jetzt im Chat als Block ausgeben** (nicht nur merken), mit dem Satz «Schick diesen Block bitte Roland»:
 ```
 Update 001 bei Simon – Ergebnis
 [ ] starter-version = 1
-[ ] ~/.claude/skills: kunden-design, review-animations, mobile-native (disable-model-invocation: true)
+[ ] ~/.claude/skills: kunden-design, review-animations, mobile-native (disable-model-invocation: true), gastro-texte mit «Zusatzthemen»
+[ ] Schutz aktuell (`diff -q ~/claude-starter-simon-update/neu/claude-home/hooks/block-sensitive.mjs ~/.claude/hooks/block-sensitive.mjs` leer), settings.json hat Gruppe «Grep|Glob»
+[ ] Vault: Kunde.md mit «Gestaltung» + «Inspiration», 04 Ressourcen/Gestaltung mit Claude.md + Inspiration.md vorhanden
 [ ] ~/.claude/settings.json env: IMPECCABLE_NO_TELEMETRY=1, DO_NOT_TRACK=1
 [ ] kunden-vorlage auf GitHub aktualisiert, npm run check grün, Launcher i/lf
 [ ] impeccable engine-probe: impeccable-engine 0.1.11
+[ ] Bildentwürfe: ja (Probeaufruf 403) / später / nein
 [ ] Muster-Kafi neu gestaltet, Vorschau auf Simons Handy angeschaut (oder: übersprungen)
 [ ] Rückfragen wegen eigener Änderungen: …
 [ ] Auffälligkeiten: …

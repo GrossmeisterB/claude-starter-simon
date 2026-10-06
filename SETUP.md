@@ -157,6 +157,9 @@ curl -s -H "Authorization: Bearer $(< ~/.config/webwerkstatt/cloudflare-token)" 
 ```
 → `result.subdomain` ist `WORKERS_SUBDOMAIN`.
 
+### 4d – Bildentwürfe (OpenAI, freiwillig)
+Simon fragen, ob er Gestaltungs-Richtungen zuerst als Bild sehen will (kostet ein paar Rappen pro Bild) – jetzt, später oder gar nicht. Ablauf genau wie in `~/claude-starter-simon/updates/001-kundenseiten-individuell.md`, Schritt 9 (ein Schritt pro Nachricht, Schlüssel nur per Notepad in `~/.config/webwerkstatt/openai-key`, nie lesen). Überspringen ist jederzeit möglich; ohne Schlüssel baut `kunden-design` direkt in Code.
+
 ---
 
 ## Phase 5 – Vault (Second Brain)
