@@ -27,7 +27,7 @@ Befehle, die den impeccable-Launcher (`"$IMP/scripts/impeccable"`) aufrufen, bek
 ```bash
 source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; cd "$REPO" &&
 ```
-In einem Befehl mit dieser Schlüssel-Präambel steht nach der Präambel **nur** der Launcher-Aufruf – kein Befehl, der etwas anzeigt, durchsucht oder kopiert (`echo`, `printf`, `cat`, `grep`, `sed`, `env`, `cp`, `tee` usw.), sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren. Ob ein Schlüssel da ist, zeigt `wc -c < ~/.config/webwerkstatt/openai-key` (Zahl über 0 = ja, Fehlermeldung = nein).
+In einem Befehl mit dieser Schlüssel-Präambel steht nach der Präambel **nur** der Launcher-Aufruf – kein Befehl, der etwas anzeigt, durchsucht oder kopiert (`echo`, `printf`, `cat`, `grep`, `sed`, `env`, `cp`, `tee` usw.), sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren. Ob ein Schlüssel da ist, zeigt `wc -c < ~/.config/webwerkstatt/openai-key` als **eigener** Befehl (Zahl über 0 = ja, Fehlermeldung = nein).
 
 Erste Prüfung:
 ```bash
@@ -86,7 +86,7 @@ Bei einer Umgestaltung, die die bisherige Welt behält, zeigt impeccable weder P
 
 - Jede vorgeschlagene Richtung nennt ihr **Schriftpaar** und ihre **Aufbau-Idee**.
 - Trifft eine Richtung die Sperrliste, ist das ein Grund, sie **vor dem Zeigen** neu würfeln zu lassen (impeccable kennt das als «re-roll»). Simon bekommt nur Richtungen zu sehen, die frei sind. Das gilt auch für die schlichte «Standard»-Richtung, die impeccable bei einer neuen Gestaltung immer dazulegt: Trifft sie die Sperrliste, mit anderem Einstieg oder anderer Reihenfolge zeigen oder weglassen.
-- **Simon wählt** die Richtung – mit Bildentwürfen direkt am Bild.
+- **Simon wählt** die Richtung – mit Bildentwürfen direkt am Bild. Verlangt impeccable eine Freigabe per Klick auf einer Seite im Browser, öffnet Simon die Seite und klickt selbst; du gibst nie stellvertretend frei.
 - Sagt Simon während der Auswahl «mutiger», «zu brav» oder «sicherer», ist das impeccables Neu-Würfeln mit Stil-Regler: `--register bolder` bzw. `--register safer` (impeccable druckt, wie).
 - **Option für den Kunden:** Will Simon dem Kunden Richtungen zeigen, die Entscheidungsseite per Playwright abfotografieren und nach `$VAULT/07 Anhänge/<Betrieb>/Richtungen/` speichern. Mail an den Kunden nur als Entwurf.
 
@@ -95,6 +95,9 @@ impeccable baut die gewählte Richtung. Dazu:
 - Browser-Farbe setzen: in `Base.astro` `<meta name="theme-color" …>` passend zur Gestaltung (hell und dunkel, falls die Seite einen Dunkel-Modus hat).
 - Schriften so wählen, dass Zahlen gut lesbar sind: keine durchgestrichene Null in Preisen, Zeiten und Telefonnummer (wirkt wie «Ø»). Notfalls die Schrift-Option für die normale Null einschalten oder eine andere Textschrift nehmen.
 - Schriften lokal einbinden (z.B. `@fontsource/<schrift>` per npm), nicht von Google Fonts laden – das ist für den Datenschutz einfacher.
+- **Alle Inhalte zeigen:** Ein Bildentwurf darf die Karte kürzen (z.B. vier statt sechs Weine). Die gebaute Seite zeigt trotzdem alles aus `site.json` und `src/content/seiten/`. Diese Regel geht impeccables Abgleich mit dem Entwurf vor; eine dadurch niedrigere Übereinstimmung ist in Ordnung und wird Simon so erklärt.
+- **Computer-Ansicht eigens gestalten:** Bildentwürfe sind Handy-Hochformat. Ab etwa 1024 px Breite braucht die Seite ein eigenes Layout (z.B. Spalten, begrenzte Zeilenlänge), nicht die vergrösserte Handy-Spalte.
+- **Favicon** (`public/favicon.svg`) zur Gestaltung passend ersetzen; das der Vorlage ist ein Platzhalter.
 - Nach jedem grösseren Schritt: `npm run check`. Rot heisst: Technik oder Inhalt kaputt → zuerst reparieren.
 - **Ohne Schlüssel** (direkt in Code gebaut): nach dem Bau einen `bolder`-Durchgang machen («mutiger»), damit die Seite nicht brav bleibt.
 - **Mehr Mut auf Zuruf** nach dem Bau: Sagt Simon «zu brav» oder «mutiger» → impeccable `bolder`; sagt er «geh über die Grenzen» → `overdrive`.
@@ -110,10 +113,11 @@ source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; cd "$RE
 ```
 Treffer → umschreiben. Bilder: Prüfsummen vergleichen, dann fällt auch eine umbenannte Kopie auf:
 ```bash
-source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; cd "$REPO" && cksum "$VAULT/07 Anhänge/<Betrieb>/Inspiration/"* | cut -d' ' -f1,2 | sort > /tmp/inspo.sum; find public src -type f -exec cksum {} + | cut -d' ' -f1,2 | sort | comm -12 /tmp/inspo.sum - ; echo "Zeilen oben = Inspirations-Bild im Projekt"
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; cd "$REPO" && comm -12 <(cksum "$VAULT/07 Anhänge/<Betrieb>/Inspiration/"* | cut -d' ' -f1,2 | sort) <(find public src -type f -exec cksum {} + | cut -d' ' -f1,2 | sort); echo "Zeilen oben = Inspirations-Bild im Projekt"
 ```
 Ergebnis Simon in einem Satz nennen.
-5. Zuerst `npx astro preview stop` (eine Vorschau läuft im Hintergrund weiter und zeigt sonst evtl. ein anderes Kundenprojekt), dann `npx astro preview`, Seitentitel prüfen (muss der Name des Betriebs sein) und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
+5. Computer-Ansicht prüfen: Bei 1280 px darf die Seite nicht wie die gestreckte Handy-Ansicht aussehen (eine einzige breite Spalte mit Riesenschrift) – sonst zurück zu «6. Bauen».
+6. Zuerst `npx astro preview stop` (eine Vorschau läuft im Hintergrund weiter und zeigt sonst evtl. ein anderes Kundenprojekt), dann `npx astro preview`, Seitentitel prüfen (muss der Name des Betriebs sein) und per Playwright **390×844** und **1280×800** abfotografieren, Simon zeigen.
 
 ## 8. Festhalten
 - impeccable schreibt am Schluss `DESIGN.md` und `.impeccable/design.json` aus der gebauten Seite. **Beide müssen existieren**, sonst ist die Gestaltung nicht fertig (und ohne `DESIGN.md` veröffentlicht GitHub die Seite nicht). Committen: `PRODUCT.md`, `DESIGN.md`, `.impeccable/design.json`, `.impeccable/config.json` (nur falls entstanden) und den Code.
