@@ -35,3 +35,21 @@ Jede Kundenseite bekommt eine eigene Gestaltung. Seiten verschiedener Kunden gle
 ## Review-Pflicht (Rolands Regel)
 
 Der Implementation-Plan **muss** Knecht (DeepSeek) als externen Reviewer verwenden, und die Umsetzung jeden nicht-trivialen Tasks ebenfalls: `deepseek -p "<Auftrag>" --allowedTools "Read,Grep,Glob"` aus dem Repo-Verzeichnis, betroffene Dateien explizit nennen, BG-Job mit `dangerouslyDisableSandbox: true`.
+
+## Erweiterung: Gestaltungsfreiheit und Inspiration (Grilling 2, 06.10.2026)
+
+Anlass: Galerie-Test (Trattoria, Bergblick) zeigt eigene, aber simple Seiten nach starrem Muster. Ursachen: kleines Inhaltsmodell, nur Startseite, keine Bildentwürfe.
+
+| # | Thema | Entscheid |
+|---|---|---|
+| E1 | Problem | Aufbau **und** Gestaltungshöhe; Aufbau ist die Wurzel |
+| E2 | Seiten | Pro Kunde frei: One-Pager oder mehrere Seiten. Technik-Test prüft über alle Seiten; Startseite zeigt mindestens Name, Telefon, Öffnungszeiten |
+| E3 | Inhalt | Kern fest in `site.json`; weitere Themen als Textdateien `src/content/seiten/*.md` (Titel, Text, Bilder). Test: jede Datei erscheint auf der Website. `gastro-texte` schreibt sie |
+| E4 | Rolle Inspiration | Pro Kunde: «so in der Art» (Standard) = Inspirations-Richtung tritt gegen gewürfelte an; «genau so» = Richtung festgelegt. Immer: Prinzipien übernehmen, nichts kopieren (Texte, Bilder, Logos, Code, Markenzeichen) |
+| E5 | Inspiration angeben | Links und Bilder. Pro Kunde `## Inspiration` in der Kunden-Notiz, allgemein `04 Ressourcen/Inspiration.md`. Claude fotografiert Webseiten (Handy + Desktop) nach `07 Anhänge/<Betrieb>/Inspiration/`, analysiert in Alltagssprache, Simon bestätigt/korrigiert |
+| E6 | Anleitung | Notiz `04 Ressourcen/Gestaltung mit Claude.md` (Inspiration sammeln, Fotos, was Claude macht, «mutiger» verlangen, was nie geht) + Hinweise in `kunden-design`; kommt mit dem Update |
+| E7 | Bildentwürfe | Ja, über OpenAI (einziger API-Weg in impeccable, `gpt-image-2.5-flare`). Entwürfe dürfen KI sein; auf der fertigen Seite KI nur für Hintergründe/Illustrationen, nie Essen, Lokal, Menschen |
+| E8 | Schlüssel | Datei `~/.config/webwerkstatt/openai-key`, nur per Umleitung beim Aufruf; Schutz-Hook sperrt sie. Optionaler Schritt in Update 001 (Projekt mit Monatslimit, Berechtigung nur Images = Request, Hinweis Organisations-Verifizierung). Ohne Schlüssel: code-led + `bolder`-Durchgang |
+| E9 | Test | Dritter erfundener Betrieb (Weinbar mit Bankett), zwei Inspirationsseiten, Bildentwürfe mit Rolands Testschlüssel; Galerie erweitern; Update-Simulation erneut |
+
+Probeaufruf 06.10.: `gpt-image-2.5-flare` mit Rolands Schlüssel → HTTP 200, keine Verifizierung nötig (für Simons neues Konto offen).
