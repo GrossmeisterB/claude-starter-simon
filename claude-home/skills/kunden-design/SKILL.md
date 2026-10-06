@@ -5,7 +5,7 @@ description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impecc
 
 # Kunden-Design
 
-Lehrmodus beachten. Wird der Skill für eine **Umgestaltung** aufgerufen (nicht aus `neuer-kunde`), gilt Simons Regel «Grilling vor grösseren Vorhaben»: zuerst klären, was an der bisherigen Gestaltung nicht passt. Zusätzlich hier: **vor jedem Schritt in ein bis zwei Sätzen ohne Fachwörter sagen, was jetzt passiert und warum.**
+Lehrmodus beachten. Wird der Skill für eine **Umgestaltung** aufgerufen (nicht aus `neuer-kunde`), gilt Simons Regel «Grilling vor grösseren Vorhaben»: zuerst klären, was an der bisherigen Gestaltung nicht passt. Bei der **ersten** Gestaltung eines Kunden (auch wenn direkt aufgerufen) reicht das Kurz-Interview aus `neuer-kunde`, kein eigenes Grilling. Zusätzlich hier: **vor jedem Schritt in ein bis zwei Sätzen ohne Fachwörter sagen, was jetzt passiert und warum.**
 
 ## Grundsätze
 - Jede Seite bekommt eine eigene Gestaltung. Die Vorlage ist ein roher Platzhalter und kein Vorbild.
@@ -65,11 +65,12 @@ impeccable ausdrücklich so beauftragen:
 ## 6. Bauen
 impeccable baut die gewählte Richtung. Dazu:
 - Browser-Farbe setzen: in `Base.astro` `<meta name="theme-color" …>` passend zur Gestaltung (hell und dunkel, falls die Seite einen Dunkel-Modus hat).
+- Schriften so wählen, dass Zahlen gut lesbar sind: keine durchgestrichene Null in Preisen, Zeiten und Telefonnummer (wirkt wie «Ø»). Notfalls die Schrift-Option für die normale Null einschalten oder eine andere Textschrift nehmen.
 - Schriften lokal einbinden (z.B. `@fontsource/<schrift>` per npm), nicht von Google Fonts laden – das ist für den Datenschutz einfacher.
 - Nach jedem grösseren Schritt: `npm run check`. Rot heisst: Technik oder Inhalt kaputt → zuerst reparieren.
 
 ## 7. Prüfen
-1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben.
+1. impeccable-Schlussprüfung so, wie seine Anleitung sie verlangt: Detektor auf die **laufende** Seite (`npx astro preview`, dann die URL prüfen – auf den Quelldateien findet er nichts) und das Finish-Review. Gibt es dessen Helfer nicht als eigene Agenten, nach den Rollendateien in `$IMP/reference/degraded/` arbeiten. Befunde beheben. Höchstens **drei** Prüfrunden; was danach offen ist, Simon als Liste nennen und in der Kunden-Notiz unter `## Wartet auf` festhalten.
 2. Handy-Prüfung: `~/.claude/skills/mobile-native/SKILL.md` mit dem Read-Werkzeug lesen und befolgen (die Seite wird fast nur auf dem Handy angeschaut; der Skill ist so eingestellt, dass er nicht von selbst anspringt, deshalb wird er hier direkt gelesen). Hinweis: `overscroll-behavior: none` ist für App-Oberflächen gedacht, hier weglassen.
 3. Hat die Richtung Bewegung oder Animation: `~/.claude/skills/review-animations/SKILL.md` (und die `STANDARDS.md` daneben) lesen und befolgen.
 4. `npm run check` grün.
