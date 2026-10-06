@@ -89,7 +89,7 @@ cd ~/Developer/kunden-vorlage && git ls-files -z | xargs -0 rm -f && cp -R ~/cla
 ```bash
 cd ~/Developer/kunden-vorlage && git add -A && { git diff --cached --quiet || git commit -m "Vorlage: eigene Gestaltung pro Kunde (Update 001)"; } && git ls-files --eol .claude/skills/impeccable/scripts/impeccable
 ```
-Die letzte Zeile muss `i/lf` und `w/lf` zeigen (sonst läuft das Gestaltungs-Werkzeug unter Windows nicht). Simon sagen, dass jetzt die Vorlage auf GitHub aktualisiert wird, Go abwarten, dann `cd ~/Developer/kunden-vorlage && git push`.
+Die letzte Zeile muss `i/lf` und `w/lf` zeigen (sonst läuft das Gestaltungs-Werkzeug unter Windows nicht). Simon gegenüber nur sagen: «Das Gestaltungs-Werkzeug ist richtig für Windows eingestellt» – die Kürzel nicht nennen. Simon sagen, dass jetzt die Vorlage auf GitHub aktualisiert wird, Go abwarten, dann `cd ~/Developer/kunden-vorlage && git push`.
 
 ## 8. Gestaltungs-Werkzeug einmal starten
 
@@ -110,7 +110,7 @@ Im Repo des Test-Kunden auf `staging` wechseln (`cd ~/Developer/<slug> && git sw
 
 ## 10. Abschluss
 
-Stand setzen (`printf '%s' 1 > ~/.config/webwerkstatt/starter-version`) und diese Prüfliste ausfüllen und als Block ausgeben, damit Simon sie Roland schicken kann:
+Stand setzen (`printf '%s' 1 > ~/.config/webwerkstatt/starter-version`). Dann diese Prüfliste ausfüllen und **jetzt im Chat als Block ausgeben** (nicht nur merken), mit dem Satz «Schick diesen Block bitte Roland»:
 ```
 Update 001 bei Simon – Ergebnis
 [ ] starter-version = 1
