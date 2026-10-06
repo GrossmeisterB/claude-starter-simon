@@ -1,8 +1,14 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
 import site from "../content/site.json";
 
 const k = site.kontakt;
+const themen = await Promise.all(
+  (await getCollection("seiten"))
+    .sort((a, b) => (a.data.reihenfolge ?? Infinity) - (b.data.reihenfolge ?? Infinity) || a.data.titel.localeCompare(b.data.titel, "de"))
+    .map(async (e) => ({ titel: e.data.titel, Content: (await render(e)).Content })),
+);
 ---
 
 <Base>
@@ -66,6 +72,15 @@ const k = site.kontakt;
       </dl>
     </div>
   </section>
+
+  {themen.map(({ titel, Content }) => (
+    <section class="thema">
+      <div class="wrap">
+        <h2>{titel}</h2>
+        <Content />
+      </div>
+    </section>
+  ))}
 
   <section id="kontakt" class="kontakt">
     <div class="wrap">

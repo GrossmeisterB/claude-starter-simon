@@ -20,6 +20,8 @@ Fast alles steht in **einer** Datei: `src/content/site.json`
 - Speisekarte → `speisekarte`
 - Ferien / Sonderhinweis → `hinweis` (leer lassen = kein Banner)
 
+Weitere Themen (Geschichte, Events, Bankett …) stehen je in einer Datei unter `src/content/seiten/` (oben `titel:`). Datei anlegen = neues Thema auf der Website.
+
 Das Aussehen (Farben, Schriften, Aufbau) steht nicht in `site.json`, sondern in `DESIGN.md` und im Code (`src/layouts/`, `src/pages/`).
 
 ## Veröffentlichen
