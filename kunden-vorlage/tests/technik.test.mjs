@@ -6,12 +6,13 @@ import { indexable as indexierbar } from "../src/lib/indexable.mjs";
 const site = JSON.parse(readFileSync(new URL("../src/content/site.json", import.meta.url), "utf8"));
 const datei = (p) => new URL(`../dist/${p}`, import.meta.url);
 const lies = (p) => readFileSync(datei(p), "utf8");
-const ENT = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
+const ENT = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " ", shy: "" };
 const text = (html) =>
   html
     .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
     .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
-    .replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? m);
+    .replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] ?? m)
+    .replace(/\u00ad/g, "");
 const kompakt = (s) => s.replace(/\s+/g, "");
 const sichtbar = (html) =>
   html
@@ -20,8 +21,11 @@ const sichtbar = (html) =>
     .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<[^>]+>/g, " ");
 const inhalt = (p) => kompakt(text(sichtbar(lies(p))));
-const link = (pfad) =>
-  new RegExp(`href=["'](https?://[^"'/]+/|/|(\\.\\.?/)+)?${pfad}(/|\\.html|/index\\.html)?["']`);
+const verlinkt = (seite, html, pfad) =>
+  [...html.matchAll(/<a\s[^>]*?(?<![\w-])href=["']([^"']+)["']/gi)].some(([, href]) => {
+    const ziel = new URL(text(href), `https://seite.test/${seite}`).pathname;
+    return ziel.replace(/(\/index)?\.html$|\/$/, "") === `/${pfad}`;
+  });
 
 const SEITEN = ["index.html", "404.html", "impressum/index.html", "datenschutz/index.html"];
 const alleSeiten = () =>
@@ -31,8 +35,9 @@ const alleSeiten = () =>
 const ZUSATZ = new URL("../src/content/seiten/", import.meta.url);
 const zusatzthemen = () =>
   existsSync(ZUSATZ)
-    ? readdirSync(ZUSATZ)
-        .filter((f) => f.endsWith(".md") && !f.startsWith("_"))
+    ? readdirSync(ZUSATZ, { recursive: true })
+        .map((f) => f.split("\\").join("/"))
+        .filter((f) => f.endsWith(".md") && !f.split("/").at(-1).startsWith("_"))
         .map((f) => {
           const m = readFileSync(new URL(f, ZUSATZ), "utf8").match(/^titel:\s*(.+)$/m);
           return { datei: f, titel: m?.[1].trim().replace(/^(["'])(.*)\1$/, "$2") };
@@ -93,7 +98,7 @@ test("alle Inhalte aus site.json stehen auf der Website", () => {
 
 test("Startseite zeigt Name, Telefon und Öffnungszeiten", () => {
   const html = inhalt("index.html");
-  const muss = [site.name, site.kontakt.telefon, ...site.oeffnungszeiten.map((o) => o.tage)];
+  const muss = [site.name, site.kontakt.telefon, ...site.oeffnungszeiten.flatMap((o) => [o.tage, ...o.zeit.split(", ")])];
   assert.deepEqual(muss.filter((s) => !html.includes(kompakt(s))), [], "fehlt auf der Startseite");
 });
 
@@ -108,8 +113,8 @@ test("jede Zusatzseite erscheint auf der Website", () => {
 test("Impressum und Datenschutz sind von jeder Seite aus verlinkt", () => {
   for (const p of alleSeiten()) {
     const html = lies(p);
-    assert.match(html, link("impressum"), `dist/${p}`);
-    assert.match(html, link("datenschutz"), `dist/${p}`);
+    assert.ok(verlinkt(p, html, "impressum"), `dist/${p}: kein Link auf /impressum`);
+    assert.ok(verlinkt(p, html, "datenschutz"), `dist/${p}: kein Link auf /datenschutz`);
   }
 });
 
