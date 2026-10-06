@@ -28,7 +28,7 @@
 - **B2 – Telemetrie global.** Aus demselben Grund greift ein `env` in `<repo>/.claude/settings.json` nicht. → `IMPECCABLE_NO_TELEMETRY=1` + `DO_NOT_TRACK=1` in Simons globale `~/.claude/settings.json` via erweitertem `merge-settings.mjs`.
 - **B3 – CRLF.** Simon hat `core.autocrlf true`. Der Shell-Launcher `scripts/impeccable` bräche mit CRLF. → `.gitattributes` in der Vorlage erzwingt LF.
 - **B4 – `mobile-native` nicht manual-only** und schreibt Code um (Nachprüfung). → Nach Installation `disable-model-invocation: true` ergänzen.
-- **B5 – Würfel-Abruf.** Telemetrie-Opt-out unterdrückt nur den Auswahl-Ping. `GET https://impeccable.style/api/roll` (Herausforderer-Richtungen) und Kartenbilder laufen weiter. **Entscheid O1 (Roland, vor Task 2):** zulassen oder per `IMPECCABLE_API_URL=http://127.0.0.1:9` abschalten. Knecht: Spec #6 «Telemetrie aus» spricht für abschalten. Task 2 Schritt 6 belegt vorher, welche Daten der Abruf sendet.
+- **B5 – Würfel-Abruf.** Telemetrie-Opt-out unterdrückt nur den Auswahl-Ping. `GET https://impeccable.style/api/roll` (Herausforderer-Richtungen) und Kartenbilder laufen weiter. **Entscheid O1 (Roland, 06.10.): zulassen.** Der Abruf sendet laut `concept_seed.rs` (engine-v0.1.11) nur `scope`, `key` (Zufallswert), `reroll`, `mode`, `grain`, `platform` – keine Kundendaten. `IMPECCABLE_API_URL` wird nicht gesetzt.
 
 ## Review Focus
 
