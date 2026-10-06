@@ -30,7 +30,7 @@ Das Aussehen (Farben, Schriften, Aufbau) steht nicht in `site.json`, sondern in 
 2. GitHub baut automatisch die **Vorschau** (ca. 1–2 Minuten) → Link oben.
 3. Passt alles: `staging` in `main` übernehmen (mergen) und pushen → die Seite ist **live**.
 
-Der Ablauf steht in `.github/workflows/deploy.yml`. Nötig sind zwei Repository-Secrets: `CLOUDFLARE_API_TOKEN` (Vorlage „Edit Cloudflare Workers") und `CLOUDFLARE_ACCOUNT_ID`.
+Der Ablauf steht in `.github/workflows/deploy.yml`. Veröffentlicht wird nur, wenn die automatische Technik-Prüfung (`npm run check`) grün ist und es eine `DESIGN.md` gibt (also die Seite gestaltet ist); sonst steht im GitHub-Lauf, warum nicht. Nötig sind zwei Repository-Secrets: `CLOUDFLARE_API_TOKEN` (Vorlage „Edit Cloudflare Workers") und `CLOUDFLARE_ACCOUNT_ID`.
 
 ## Suchmaschinen
 

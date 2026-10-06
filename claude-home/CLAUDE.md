@@ -39,7 +39,7 @@ Simon lernt Git, GitHub und Cloudflare gerade erst. Deshalb:
 ## Beweis vor „fertig"
 
 - Nie „fertig" sagen ohne Nachweis.
-- Bei Webseiten heisst Nachweis: `npm run check` ist grün **und** die Seite wurde per Playwright in **Handy-Ansicht (390×844)** angeschaut – Screenshot zeigen. Der Wirt schaut auf dem Handy, nicht am Laptop.
+- Bei Webseiten heisst Nachweis: `npm run check` ist grün (ältere Kundenrepos ohne dieses Script: `npm run build` läuft durch; Nachrüsten über `kunden-design`) **und** die Seite wurde per Playwright in **Handy-Ansicht (390×844)** angeschaut – Screenshot zeigen. Der Wirt schaut auf dem Handy, nicht am Laptop.
 - Nach einem Deploy: die echte URL aufrufen und prüfen, nicht nur „Actions ist grün".
 - Datum immer per `date +%F` holen, nie raten.
 
@@ -60,8 +60,8 @@ Simon lernt Git, GitHub und Cloudflare gerade erst. Deshalb:
 - Stack: **Astro** (statisch) → **Cloudflare Workers** (Static Assets) via **GitHub Actions**.
 - Pro Kunde ein eigenes privates Repo aus der Vorlage `kunden-vorlage` → Skill `neuer-kunde`.
 - Branches: `staging` = Vorschau für den Kunden, `main` = live.
-- Inhalte (Menü, Öffnungszeiten, Ferien, Kontakt) stehen in `src/content/site.json` – Änderungen dort, nie fest im Layout.
-- **Jede Kundenseite hat ihre eigene Gestaltung** → Skill `kunden-design` (mit impeccable). Nie die Vorlage als fertige Seite verwenden, nie Schriftpaar oder Aufbau eines anderen Kunden wiederholen. Gestaltung steht in `DESIGN.md` im Kundenrepo. Fotos: lieber keine als schlechte; KI-Bilder nur für Hintergründe.
+- Inhalte (Menü, Öffnungszeiten, Ferien, Kontakt) stehen in `src/content/site.json`, weitere Themen (Geschichte, Bankett, Events …) je in `src/content/seiten/<thema>.md` – Änderungen dort, nie fest im Layout.
+- **Jede Kundenseite hat ihre eigene Gestaltung** → Skill `kunden-design` (mit impeccable). Nie die Vorlage als fertige Seite verwenden, nie Schriftpaar oder Aufbau eines anderen Kunden wiederholen. Gestaltung steht in `DESIGN.md` im Kundenrepo. Fotos: lieber keine als schlechte; KI-Bilder auf der Seite nur für Hintergründe, Texturen, Muster und Illustrationen – nie Essen, Lokal oder Menschen.
 - `noindex` bleibt aktiv, bis `live: true` gesetzt ist (erst wenn die Kundendomain hängt). Staging ist immer `noindex`.
 - `UEBERGABE.md` im Repo wächst mit: Domain, Zugänge, wie man ändert und veröffentlicht.
 - Texte für Kunden → Skill `gastro-texte`.

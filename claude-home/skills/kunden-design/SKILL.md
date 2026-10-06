@@ -1,6 +1,6 @@
 ---
 name: kunden-design
-description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impeccable – Inspiration, Bild-Entscheid, Umfang, Designrichtung (mit Bildentwürfen, falls ein OpenAI-Schlüssel da ist), Umsetzung, Prüfung –, sodass sie weder wie die Vorlage noch wie ein anderer Kunde aussieht. Wird von neuer-kunde vor der ersten Demo aufgerufen, geht auch einzeln für eine Umgestaltung. Trigger - "Gestaltung für", "Design für", "gestalte die Seite", "Seite umgestalten", "/kunden-design".
+description: Gestaltet die Webseite eines Gastro-Kunden eigenständig mit impeccable – Inspiration, Bild-Entscheid, Umfang, Designrichtung (mit Bildentwürfen, falls ein OpenAI-Schlüssel da ist), Umsetzung, Prüfung –, sodass sie weder wie die Vorlage noch wie ein anderer Kunde aussieht. Wird von neuer-kunde vor der ersten Demo aufgerufen, geht auch einzeln für eine Umgestaltung. Trigger - "Gestaltung für", "Design für", "gestalte die Seite", "Seite umgestalten", "richte die Bildentwürfe ein", "/kunden-design".
 ---
 
 # Kunden-Design
@@ -25,9 +25,9 @@ source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$R
 ```
 Befehle, die den impeccable-Launcher (`"$IMP/scripts/impeccable"`) aufrufen, bekommen zusätzlich den OpenAI-Schlüssel (falls vorhanden) – nur so, nie anders:
 ```bash
-source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; cd "$REPO" &&
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; export IMPECCABLE_NO_TELEMETRY=1 DO_NOT_TRACK=1; cd "$REPO" &&
 ```
-In einem Befehl mit dieser Schlüssel-Präambel steht nach der Präambel **nur** der Launcher-Aufruf – kein Befehl, der etwas anzeigt, durchsucht oder kopiert (`echo`, `printf`, `cat`, `grep`, `sed`, `env`, `cp`, `tee` usw.), sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren. Ob ein Schlüssel da ist, zeigt `wc -c < ~/.config/webwerkstatt/openai-key` als **eigener** Befehl (Zahl über 0 = ja, Fehlermeldung = nein).
+In einem Befehl mit dieser Schlüssel-Präambel steht nach der Präambel **nur** der Launcher-Aufruf – kein Befehl, der etwas anzeigt, durchsucht oder kopiert (`echo`, `printf`, `cat`, `grep`, `sed`, `env`, `cp`, `tee` usw.), sonst sperrt der Schutz-Hook den ganzen Befehl. Ausgaben des Launchers nicht im selben Befehl weiterverarbeiten, sondern in einem eigenen Befehl ohne Schlüssel-Präambel. Die Schlüsseldatei nie lesen, anzeigen oder kopieren. Ob ein Schlüssel da ist, zeigt `wc -c < ~/.config/webwerkstatt/openai-key` als **eigener** Befehl (Zahl über 100 = ja, Fehlermeldung oder kleiner = nein). Kein Schlüssel und Simon möchte Bildentwürfe: Die Einrichtung steht in Schritt 9 von `https://raw.githubusercontent.com/GrossmeisterB/claude-starter-simon/main/updates/001-kundenseiten-individuell.md` – mit dem WebFetch-Werkzeug lesen und Schritt für Schritt mit Simon durchgehen.
 
 Erste Prüfung:
 ```bash
@@ -39,7 +39,7 @@ source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$R
 - **impeccable laden:** `~/Developer/<slug>/.claude/skills/impeccable/SKILL.md` mit dem Read-Werkzeug lesen und für die Schritte 4–8 befolgen. Sein Skill-Ordner ist dieser Ordner; den Launcher immer mit vollem Pfad und Schlüssel-Präambel aufrufen: `…; cd "$REPO" && "$IMP/scripts/impeccable" <befehl>`. Simon kurz sagen: «impeccable ist ein Gestaltungs-Werkzeug, das in jedem Kundenprojekt mitkommt. Beim ersten Mal lädt es ein kleines Programm herunter.»
 - Als ersten impeccable-Befehl einmal den Projekt-Kontext laden (verlangt impeccable selbst):
 ```bash
-source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; cd "$REPO" && "$IMP/scripts/impeccable" context
+source ~/.config/webwerkstatt/config.env; REPO="$HOME/Developer/<slug>"; IMP="$REPO/.claude/skills/impeccable"; [ -s ~/.config/webwerkstatt/openai-key ] && export OPENAI_API_KEY="$(< ~/.config/webwerkstatt/openai-key)"; export IMPECCABLE_NO_TELEMETRY=1 DO_NOT_TRACK=1; cd "$REPO" && "$IMP/scripts/impeccable" context
 ```
 
 ## 1. Material sichten
@@ -52,7 +52,7 @@ Quellen suchen: Kunden-Notiz `## Inspiration` und die allgemeine Sammlung `$VAUL
 - Simon bestätigt oder korrigiert. Den Modus festhalten: **«so in der Art»** (Standard – die Inspiration tritt gegen andere Richtungen an) oder **«genau so»** (die Richtung ist damit gesetzt). In der Kunden-Notiz unter `## Inspiration` eintragen.
 
 ## 1c. Umfang: eine Seite oder mehrere
-Mit Simon nach Inhaltsmenge entscheiden: alles auf einer Seite (One-Pager) oder mehrere Seiten (z.B. Start, Karte, Bankett). Zusätzliche Themen (Geschichte, Events, Bankett, Degustationen …) sind je eine Datei `src/content/seiten/<thema>.md` mit `titel:` oben; die Texte schreibt `gastro-texte`. Jede dieser Dateien muss auf der Website sichtbar werden (die Technik-Prüfung kontrolliert das). Die Startseite zeigt immer mindestens Name, Telefon und Öffnungszeiten.
+Mit Simon nach Inhaltsmenge entscheiden: alles auf einer Seite (One-Pager) oder mehrere Seiten (z.B. Start, Karte, Bankett). Zusätzliche Themen (Geschichte, Events, Bankett, Degustationen …) sind je eine Datei `src/content/seiten/<thema>.md` mit `titel:` oben; die Texte schreibt `gastro-texte`. Jede dieser Dateien muss auf der Website sichtbar werden (die Technik-Prüfung kontrolliert das). Deshalb die Themen in der Gestaltung immer **allgemein** aus der Sammlung darstellen (`getCollection("seiten")`, wie in der Vorlage), nie einzeln fest verdrahten – sonst erscheint ein später angelegtes Thema nicht, und die Prüfung sperrt jede Veröffentlichung. Die Startseite zeigt immer mindestens Name, Telefon und Öffnungszeiten.
 
 ## 2. Bild-Entscheid: mit oder ohne Fotos
 Jedes vorhandene Foto ansehen und kurz beurteilen: scharf? gutes Licht? mindestens 1600 Pixel breit? zeigt es etwas Echtes, das Gäste interessiert (Gerichte, Raum, Terrasse)? darf es verwendet werden (Kunde hat die Rechte)?
@@ -132,7 +132,8 @@ Simon sagen: «Dieses Projekt stammt aus der alten Vorlage. Ich kopiere zuerst d
 ```bash
 V=~/Developer/kunden-vorlage; REPO="$HOME/Developer/<slug>"
 cp -R "$V/.claude" "$V/tests" "$V/.gitattributes" "$REPO"/
+cp "$V/src/content.config.ts" "$REPO/src/content.config.ts"; mkdir -p "$REPO/src/content/seiten"
 cp "$V/.github/workflows/deploy.yml" "$REPO/.github/workflows/deploy.yml"
 cat "$V/.gitignore" "$REPO/.gitignore" | sort -u > "$REPO/.gitignore.neu" && mv "$REPO/.gitignore.neu" "$REPO/.gitignore"
 ```
-Dann `package.json` um das Script `check` aus `$V/package.json` ergänzen, `farben` aus `site.json` entfernen und die Stellen, die `site.farben` verwenden, durch feste Werte ersetzen (werden in Schritt 6 ohnehin neu gestaltet). `npm run check` → grün, committen, weiter bei Schritt 1.
+Dann `package.json` um das Script `check` (und `engines`) aus `$V/package.json` ergänzen, in `UEBERGABE.md` den Abschnitt «Inhalte ändern» und den Absatz unter «Veröffentlichen» aus `$V/UEBERGABE.md` übernehmen (die Zeile «Farben → `farben`» fällt weg), `farben` aus `site.json` entfernen und die Stellen, die `site.farben` verwenden, durch feste Werte ersetzen (werden in Schritt 6 ohnehin neu gestaltet). `npm run check` → grün, committen, weiter bei Schritt 1.

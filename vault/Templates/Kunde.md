@@ -18,7 +18,7 @@ domain:
 - **Bisherige Webseite:** 
 
 ## Status
-- Repo angelegt, Demo noch nicht gezeigt
+- Repo angelegt, Gestaltung läuft
 
 ## Gestaltung
 - **Richtung:** (ein Satz, z.B. «Kreidetafel-Bistro: Karte im Mittelpunkt, warm, handfest»)

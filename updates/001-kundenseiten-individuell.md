@@ -11,7 +11,7 @@ Sinngemäss sagen: «Bisher hätten alle deine Kundenseiten gleich ausgesehen, n
 Erklären: «Ich hole zum Vergleich die Version, die du beim Einrichten bekommen hast. So sehe ich, ob du seither selbst etwas angepasst hast, und überschreibe nichts davon.»
 ```bash
 BASIS="${BASIS:-https://github.com/GrossmeisterB/claude-starter-simon/archive/refs/tags/v1.zip}"
-cd ~/claude-starter-simon-update && [ -d alt ] && echo "schon da" || { curl -sL -o alt.zip "$BASIS" && rm -rf alt-tmp && mkdir alt-tmp \
+cd ~/claude-starter-simon-update || exit 1; [ -d alt ] && echo "schon da" || { curl -fsSL -o alt.zip "$BASIS" && rm -rf alt-tmp && mkdir alt-tmp \
   && (cd alt-tmp && { /c/Windows/System32/tar.exe -xf ../alt.zip 2>/dev/null || tar -xf ../alt.zip; }) \
   && mv alt-tmp/claude-starter-simon-*/ alt && rm -rf alt-tmp alt.zip; }; ls alt
 ```
@@ -120,7 +120,7 @@ Die letzte Zeile muss `i/lf` und `w/lf` zeigen (sonst läuft das Gestaltungs-Wer
 
 Erklären: «Ich starte das Gestaltungs-Werkzeug einmal zum Test. Beim ersten Mal lädt es ein kleines Programm herunter und prüft, dass es unverändert ist.»
 ```bash
-cd ~/Developer/kunden-vorlage && .claude/skills/impeccable/scripts/impeccable engine-probe
+cd ~/Developer/kunden-vorlage && IMPECCABLE_NO_TELEMETRY=1 DO_NOT_TRACK=1 .claude/skills/impeccable/scripts/impeccable engine-probe
 ```
 Erwartet: `impeccable-engine 0.1.11`. Das Gestaltungs-Werkzeug ist bewusst auf einen geprüften Stand festgelegt. Es wird nicht selbst aktualisiert, sondern nur über ein späteres Update, wenn Roland eine neue Version geprüft hat.
 
@@ -128,7 +128,7 @@ Erwartet: `impeccable-engine 0.1.11`. Das Gestaltungs-Werkzeug ist bewusst auf e
 
 Erklären: «Wenn du willst, kann ich dir jede Gestaltungs-Richtung zuerst als Bild der fertigen Seite zeigen, bevor ich sie baue. Dafür braucht es ein Konto bei OpenAI (der Firma hinter ChatGPT) mit einem Schlüssel. Jedes Bild kostet ein paar Rappen, du legst ein Monatslimit fest. Ohne das baue ich direkt, das ist gratis und funktioniert auch gut. Willst du es jetzt einrichten, später, oder gar nicht?»
 Zuerst prüfen, ob schon eingerichtet: `wc -c < ~/.config/webwerkstatt/openai-key` – eine Zahl über 100 → nur den Probeaufruf (Punkt 8 unten) machen, dann weiter mit Schritt 10. Fehlermeldung oder 0 → Simon fragen wie oben.
-- **Später / gar nicht** → überspringen, in der Prüfliste «Bildentwürfe: nein» bzw. «später» eintragen. Nachholen: «richte die Bildentwürfe ein» → diesen Schritt ausführen.
+- **Später / gar nicht** → überspringen, in der Prüfliste «Bildentwürfe: nein» bzw. «später» eintragen. Nachholen: Simon sagt «richte die Bildentwürfe ein» – der Skill `kunden-design` holt dann genau diesen Schritt.
 - **Jetzt** → Simon klickt selbst. **Ein Schritt pro Nachricht**, erst nach seinem «ok» der nächste:
   1. platform.openai.com öffnen, mit eigenem Konto anmelden oder registrieren.
   2. Oben links ein neues Projekt anlegen, Name «Webwerkstatt».

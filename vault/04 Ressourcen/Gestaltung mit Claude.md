@@ -27,7 +27,7 @@ Inspiration heisst: Seiten oder Bilder, die dir oder dem Kunden gefallen.
 2. Du bestätigst oder korrigierst und sagst, wie eng es sein soll:
    - **«so in der Art»** – die Inspiration wird eine von mehreren Richtungen, du wählst.
    - **«genau so»** – die Richtung ist damit gesetzt.
-3. Claude zeigt dir Richtungen. Hast du einen OpenAI-Schlüssel eingerichtet (optional, siehe Update-Anleitung), fragt dich Claude einmal pro Kunde: **Bildentwürfe** – du siehst jede Richtung zuerst als Bild der fertigen Seite, kostet ein paar Rappen pro Bild – oder **direkt bauen** (gratis, du siehst die Seite erst fertig). Ohne Schlüssel baut Claude immer direkt.
+3. Claude zeigt dir Richtungen. Hast du einen OpenAI-Schlüssel eingerichtet (optional; einrichten jederzeit mit dem Satz «richte die Bildentwürfe ein»), fragt dich Claude einmal pro Kunde: **Bildentwürfe** – du siehst jede Richtung zuerst als Bild der fertigen Seite, kostet ein paar Rappen pro Bild – oder **direkt bauen** (gratis, du siehst die Seite erst fertig). Ohne Schlüssel baut Claude immer direkt.
 4. Du wählst, Claude baut, prüft und zeigt dir Handy- und Computer-Ansicht.
 
 ## Mehr Mut verlangen
