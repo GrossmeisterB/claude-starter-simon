@@ -30,6 +30,8 @@ test("openai-key: anzeigen, kopieren oder umleiten wird gesperrt", () => {
     "grep -r . ~/.config/webwerkstatt/",
     "cp -r ~/.config/webwerkstatt /tmp/x",
     "find ~/.config/webwerkstatt -type f -exec head {} +",
+    "cd ~/.config/webwerkstatt && sed -n p *",
+    "cd ~/.config/webwerkstatt && less open*",
   ])
     assert.equal(bash(cmd), "deny", cmd);
 });
@@ -42,12 +44,23 @@ test("openai-key: erlaubte Formen gehen durch", () => {
     `touch ${KEY}`,
     `notepad "$(cygpath -w ${KEY})" &`,
     `curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $(< ${KEY})" https://api.openai.com/v1/models`,
+    'OPENAI_API_KEY="$(< "$HOME/.config/webwerkstatt/openai-key")" x/impeccable context',
+    `rm ${KEY}`,
   ])
     assert.equal(bash(cmd), "", cmd);
 });
 
+const PRE = `[ -s ${KEY} ] && export OPENAI_API_KEY="$(< ${KEY})"; `;
 test("OPENAI_API_KEY zusammen mit Ausgabe wird gesperrt", () => {
-  for (const cmd of ["printenv OPENAI_API_KEY", "echo $OPENAI_API_KEY", "env | grep OPENAI_API_KEY", "export -p | grep OPENAI_API_KEY"])
+  for (const cmd of [
+    "printenv OPENAI_API_KEY", "echo $OPENAI_API_KEY", "env | grep OPENAI_API_KEY", "export -p | grep OPENAI_API_KEY",
+    PRE + 'bash -c "printenv OPENAI_API_KEY"',
+    PRE + "sh -c 'echo ${OPENAI_API_KEY:0:12}'",
+    "bash -x -c '" + PRE + "x/impeccable context'",
+    PRE + "set -x; x/impeccable context",
+    PRE + "node -pe process.env.OPENAI_API_KEY",
+    PRE + "python3 -Ic 'import os;print(os.environ[\"OPENAI_API_KEY\"])'",
+  ])
     assert.equal(bash(cmd), "deny", cmd);
 });
 
@@ -76,6 +89,8 @@ test("Bestehender Schutz bleibt", () => {
   assert.equal(bash("ls ~/.config/webwerkstatt/"), "");
   assert.equal(bash("mkdir -p ~/.config/webwerkstatt && touch ~/.config/webwerkstatt/openai-key"), "");
   assert.equal(bash("grep GITHUB_USER ~/.config/webwerkstatt/config.env"), "");
+  assert.equal(bash(`printf '%s' "0123456789abcdef0123456789abcdef" > ~/.config/webwerkstatt/cloudflare-account-id`), "", "SETUP 4c");
+  assert.equal(bash(`printf '%s' "$(cat ~/.config/webwerkstatt/cloudflare-token)" > ~/.config/webwerkstatt/cloudflare-account-id`), "deny");
   assert.equal(entscheid("Read", { file_path: "/x/.config/webwerkstatt/cloudflare-token" }), "deny");
   assert.equal(entscheid("Read", { file_path: "src/content/site.json" }), "");
 });

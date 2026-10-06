@@ -17,21 +17,23 @@ const kompakt = (s) => s.replace(/\s+/g, "");
 const sichtbar = (html) =>
   html
     .replace(/^[\s\S]*?<body[^>]*>/i, "")
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<(script|template|noscript)\b[\s\S]*?<\/\1>/gi, "")
     .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<[^>]+>/g, " ");
 const inhalt = (p) => kompakt(text(sichtbar(lies(p))));
 const verlinkt = (seite, html, pfad) =>
   [...html.matchAll(/<a\s[^>]*?(?<![\w-])href=["']([^"']+)["']/gi)].some(([, href]) => {
-    const ziel = new URL(text(href), `https://seite.test/${seite}`).pathname;
-    return ziel.replace(/(\/index)?\.html$|\/$/, "") === `/${pfad}`;
+    const ziel = new URL(text(href), `https://seite.test/${seite}`);
+    if (ziel.host !== "seite.test" && ziel.host !== site.domain) return false;
+    return ziel.pathname.replace(/(\/index)?\.html$|\/$/, "") === `/${pfad}`;
   });
 
 const SEITEN = ["index.html", "404.html", "impressum/index.html", "datenschutz/index.html"];
 const alleSeiten = () =>
   readdirSync(datei(""), { recursive: true })
     .map((p) => p.split("\\").join("/"))
-    .filter((p) => p.endsWith(".html") && p !== "404.html");
+    .filter((p) => p.endsWith(".html") && p !== "404.html" && /<body/i.test(lies(p)));
 const ZUSATZ = new URL("../src/content/seiten/", import.meta.url);
 const zusatzthemen = () =>
   existsSync(ZUSATZ)
@@ -83,7 +85,7 @@ test("alle Inhalte aus site.json stehen auf der Website", () => {
   if (site.hinweis) muss.push(site.hinweis);
   for (const g of site.speisekarte) {
     muss.push(g.titel);
-    for (const d of g.gerichte) muss.push(d.name);
+    for (const d of g.gerichte) muss.push(d.name, ...(d.beschreibung ? [d.beschreibung] : []));
   }
   for (const o of site.oeffnungszeiten) muss.push(o.tage, ...o.zeit.split(", "));
   for (const s of muss) if (!html.includes(kompakt(s))) fehlt.push(s);
@@ -91,7 +93,7 @@ test("alle Inhalte aus site.json stehen auf der Website", () => {
     for (const d of g.gerichte) {
       const [fr, rp = "00"] = d.preis.split(".");
       const formen = [d.preis, `${fr},${rp}`, ...(rp === "00" ? [`${fr}.–`, `${fr}.-`, `${fr}.—`] : [])];
-      if (!formen.some((f) => html.includes(f))) fehlt.push(`Preis ${d.name}: ${d.preis}`);
+      if (!formen.some((f) => new RegExp(`(?<![\\d.,])${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d)`).test(html))) fehlt.push(`Preis ${d.name}: ${d.preis}`);
     }
   assert.deepEqual(fehlt, [], "nicht auf der Seite (fest im Code statt aus site.json?)");
 });
