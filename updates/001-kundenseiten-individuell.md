@@ -59,7 +59,7 @@ Die Datei **nicht** ersetzen. Nur zwei Stellen angleichen:
 cd ~/claude-starter-simon-update && for f in alt/claude-home/CLAUDE.md ~/.claude/CLAUDE.md neu/claude-home/CLAUDE.md; do echo "=== $f"; awk '/^## Webseiten-Standard/{a=1} /^## Second Brain/{a=0} a' "$f"; grep -n "Bei Webseiten heisst Nachweis" "$f"; done
 ```
 - Abschnitt `## Webseiten-Standard` bei Simon gleich wie in `alt` → mit dem Edit-Werkzeug durch die Fassung aus `neu` ersetzen. Gleich wie `neu` → nichts tun. Sonst → zeigen, fragen, zusammenführen.
-- Zeile «Bei Webseiten heisst Nachweis: …»: Ist sie bei Simon gleich wie in `alt` → «Build läuft durch» durch «`npm run check` ist grün» ersetzen. Gleich wie in `neu` → nichts tun. Hat Simon sie umformuliert → zeigen, fragen.
+- Zeile «Bei Webseiten heisst Nachweis: …»: Ist sie bei Simon gleich wie in `alt` → mit dem Edit-Werkzeug durch die Zeile aus `neu` ersetzen. Gleich wie in `neu` → nichts tun. Hat Simon sie umformuliert → zeigen, fragen.
 - Lehrmodus-Status `(aktiv)`/`(aus)` und alle anderen Abschnitte bleiben, wie sie bei Simon sind.
 
 ## 4. Einstellungen
