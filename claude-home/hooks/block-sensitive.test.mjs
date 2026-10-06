@@ -46,6 +46,7 @@ test("openai-key: erlaubte Formen gehen durch", () => {
     `curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $(< ${KEY})" https://api.openai.com/v1/models`,
     'OPENAI_API_KEY="$(< "$HOME/.config/webwerkstatt/openai-key")" x/impeccable context',
     `rm ${KEY}`,
+    `rm -rf ${KEY}`,
   ])
     assert.equal(bash(cmd), "", cmd);
 });
@@ -90,6 +91,7 @@ test("Bestehender Schutz bleibt", () => {
   assert.equal(bash("mkdir -p ~/.config/webwerkstatt && touch ~/.config/webwerkstatt/openai-key"), "");
   assert.equal(bash("grep GITHUB_USER ~/.config/webwerkstatt/config.env"), "");
   assert.equal(bash(`printf '%s' "0123456789abcdef0123456789abcdef" > ~/.config/webwerkstatt/cloudflare-account-id`), "", "SETUP 4c");
+  assert.equal(bash(`printf '%s' "0123456789abcdef0123456789abcdef" > "$HOME/.config/webwerkstatt/cloudflare-account-id"`), "", "SETUP 4c quoted");
   assert.equal(bash(`printf '%s' "$(cat ~/.config/webwerkstatt/cloudflare-token)" > ~/.config/webwerkstatt/cloudflare-account-id`), "deny");
   assert.equal(entscheid("Read", { file_path: "/x/.config/webwerkstatt/cloudflare-token" }), "deny");
   assert.equal(entscheid("Read", { file_path: "src/content/site.json" }), "");

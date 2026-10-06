@@ -25,7 +25,8 @@ const inhalt = (p) => kompakt(text(sichtbar(lies(p))));
 const verlinkt = (seite, html, pfad) =>
   [...html.matchAll(/<a\s[^>]*?(?<![\w-])href=["']([^"']+)["']/gi)].some(([, href]) => {
     const ziel = new URL(text(href), `https://seite.test/${seite}`);
-    if (ziel.host !== "seite.test" && ziel.host !== site.domain) return false;
+    const ohneWww = (h) => String(h ?? "").replace(/^www\./, "");
+    if (ziel.host !== "seite.test" && (!site.domain || ohneWww(ziel.host) !== ohneWww(site.domain))) return false;
     return ziel.pathname.replace(/(\/index)?\.html$|\/$/, "") === `/${pfad}`;
   });
 
@@ -93,7 +94,7 @@ test("alle Inhalte aus site.json stehen auf der Website", () => {
     for (const d of g.gerichte) {
       const [fr, rp = "00"] = d.preis.split(".");
       const formen = [d.preis, `${fr},${rp}`, ...(rp === "00" ? [`${fr}.–`, `${fr}.-`, `${fr}.—`] : [])];
-      if (!formen.some((f) => new RegExp(`(?<![\\d.,])${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d)`).test(html))) fehlt.push(`Preis ${d.name}: ${d.preis}`);
+      if (!formen.some((f) => new RegExp(`(?<!\\d)${f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?!\\d)`).test(html))) fehlt.push(`Preis ${d.name}: ${d.preis}`);
     }
   assert.deepEqual(fehlt, [], "nicht auf der Seite (fest im Code statt aus site.json?)");
 });

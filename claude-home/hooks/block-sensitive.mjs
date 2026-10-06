@@ -27,7 +27,7 @@ const ti = input.tool_input ?? {};
 if (tool === "Bash") {
   const cmd = String(ti.command ?? "");
   // SETUP 4c: Account-ID (kein Geheimnis) wörtlich in ihre Datei schreiben.
-  if (/^\s*printf\s+'%s'\s+"[^"$`]*"\s*>\s*(~|\$HOME)\/\.config\/webwerkstatt\/cloudflare-account-id\s*$/.test(cmd)) process.exit(0);
+  if (/^\s*printf\s+'%s'\s+"[^"$`]*"\s*>\s*("\$HOME\/\.config\/webwerkstatt\/cloudflare-account-id"|(~|\$HOME|"\$HOME")\/\.config\/webwerkstatt\/cloudflare-account-id)\s*$/.test(cmd)) process.exit(0);
   // Token-Dateien dürfen nur per Umleitung "< datei" in gh secret set fliessen, nie angezeigt werden.
   if (/webwerkstatt[\\/](cloudflare-token|cloudflare-account-id)/.test(cmd) && /\b(cat|type|less|more|head|tail|echo|printf|grep|sed|awk|cp|mv|base64|xxd|od|strings|gc|Get-Content|Select-String|Copy-Item|copy|xcopy)\b/i.test(cmd)) {
     emit("deny", "Token-Datei darf nicht ausgegeben oder kopiert werden. Nur per Umleitung verwenden: gh secret set … < ~/.config/webwerkstatt/cloudflare-token");
@@ -47,7 +47,7 @@ if (tool === "Bash") {
       .replace(new RegExp(String.raw`\[\s+-s\s+${P}\s+\]`, "g"), "")
       .replace(new RegExp(String.raw`\bwc\s+-c\s*<\s*${P}`, "g"), "")
       .replace(new RegExp(String.raw`\btouch\s+${P}`, "g"), "")
-      .replace(new RegExp(String.raw`\brm\s+(-f\s+)?${P}`, "g"), "")
+      .replace(new RegExp(String.raw`\brm\s+(-[rf]+\s+)?${P}`, "g"), "")
       .replace(new RegExp(String.raw`\bnotepad\s+"\$\(cygpath\s+-w\s+${P}\)"`, "g"), "");
     const curlZeigt = /\bcurl\b/.test(cmd) && (!/\s-o\s+\/dev\/null\b/.test(cmd) || /\s(-[a-zA-Z]*[viD][a-zA-Z]*|--verbose|--include|--trace\S*|--dump-header)(?=\s|$)/.test(cmd));
     if (/openai-key/.test(rest) || ausgabe.test(cmd) || curlZeigt) {
