@@ -17,6 +17,12 @@
         "hooks": [
           { "type": "command", "command": "node \"$HOME/.claude/hooks/block-sensitive.mjs\"" }
         ]
+      },
+      {
+        "matcher": "Grep|Glob",
+        "hooks": [
+          { "type": "command", "command": "node \"$HOME/.claude/hooks/block-sensitive.mjs\"" }
+        ]
       }
     ],
     "UserPromptSubmit": [

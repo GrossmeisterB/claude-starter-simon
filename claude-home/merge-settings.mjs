@@ -16,9 +16,10 @@ if (existsSync(target)) {
 current.hooks ??= {};
 for (const [event, groups] of Object.entries(template.hooks)) {
   current.hooks[event] ??= [];
-  const known = new Set(current.hooks[event].flatMap((g) => (g.hooks ?? []).map((h) => h.command)));
+  const key = (g, h) => `${g.matcher ?? ""}\n${h.command}`;
+  const known = new Set(current.hooks[event].flatMap((g) => (g.hooks ?? []).map((h) => key(g, h))));
   for (const group of groups) {
-    if (!group.hooks.every((h) => known.has(h.command))) current.hooks[event].push(group);
+    if (!group.hooks.every((h) => known.has(key(group, h)))) current.hooks[event].push(group);
   }
 }
 

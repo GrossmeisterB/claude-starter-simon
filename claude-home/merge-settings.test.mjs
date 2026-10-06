@@ -31,3 +31,15 @@ test("zweimal laufen ändert nichts mehr", () => {
   lauf(home);
   assert.equal(readFileSync(join(home, ".claude", "settings.json"), "utf8"), erst);
 });
+
+test("Schutz-Hook greift nach Update auch bei Grep und Glob, ohne Doppel", () => {
+  const home = mkdtempSync(join(tmpdir(), "ms-"));
+  mkdirSync(join(home, ".claude"));
+  const ziel = join(home, ".claude", "settings.json");
+  const cmd = 'node "$HOME/.claude/hooks/block-sensitive.mjs"';
+  writeFileSync(ziel, JSON.stringify({ hooks: { PreToolUse: [{ matcher: "Read|Edit|Write|MultiEdit|Bash", hooks: [{ type: "command", command: cmd }] }] } }));
+  lauf(home);
+  const gruppen = JSON.parse(readFileSync(ziel, "utf8")).hooks.PreToolUse.filter((g) => g.hooks.some((h) => h.command === cmd));
+  for (const tool of ["Read", "Bash", "Grep", "Glob"])
+    assert.equal(gruppen.filter((g) => new RegExp(`^(${g.matcher})$`).test(tool)).length, 1, tool);
+});
